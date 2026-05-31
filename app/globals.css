@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/* =========================
+   🎨 DESIGN TOKENS SYSTEM
+   Kinetic Blueprint (Figma-based)
+========================= */
+
+/* 🌐 Base Theme */
+:root {
+  --font-family-base: Inter;
+
+  /* =========================
+     🎨 COLOR SYSTEM
+  ========================= */
+
+  --background: #f9f9ff;
+  --foreground: #041b3c;
+
+  /* Brand */
+  --primary: #003d9b;
+  --primary-container: #0052cc;
+
+  /* Surfaces */
+  --surface-high: #d7e2ff;
+  --surface-low: #f1f3ff;
+
+  /* Semantic */
+  --success: #82f9be;
+  --warning: #ffb300;
+  --error: #ba1a1a;
+
+  /* Text (Slate neutrals from system) */
+  --text-primary: #041b3c;
+  --text-secondary: #4f5f7b;
+  --text-muted: #c3c6d6;
+
+  /* =========================
+     🔤 TYPOGRAPHY SYSTEM
+  ========================= */
+
+  /* Display-LG */
+  --text-display-lg: 56px;
+  --leading-display-lg: 56px;
+  --font-display-lg: 700;
+  --tracking-display-lg: -2.8px;
+
+  /* Headline-LG */
+  --text-headline-lg: 32px;
+  --leading-headline-lg: 40px;
+  --font-headline-lg: 600;
+  --tracking-headline-lg: 0px;
+
+  /* Title-MD */
+  --text-title-md: 18px;
+  --leading-title-md: 27px;
+  --font-title-md: 500;
+  --tracking-title-md: 0px;
+
+  /* Body-MD */
+  --text-body-md: 14px;
+  --leading-body-md: 22.75px;
+  --font-body-md: 400;
+  --tracking-body-md: 0px;
+
+  /* Label-SM */
+  --text-label-sm: 11px;
+  --leading-label-sm: 16.5px;
+  --font-label-sm: 700;
+  --tracking-label-sm: 1.1px;
+  --text-transform-label-sm: uppercase;
+
+  /* =========================
+     📏 SPACING SYSTEM (8pt grid)
+  ========================= */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+
+  /* =========================
+     📐 RADIUS SYSTEM
+  ========================= */
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+/* 🌙 DARK MODE */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+
+    --surface-low: #121826;
+    --surface-high: #1a2235;
+
+    --text-primary: #ededed;
+    --text-secondary: #a9b4c7;
+    --text-muted: #6b768a;
+  }
+}
+
+/* =========================
+   🔗 TAILWIND v4 MAPPING
+========================= */
+
+@theme inline {
+  --font-sans: var(--font-family-base);
+
+  /* Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+
+  --color-surface-high: var(--surface-high);
+  --color-surface-low: var(--surface-low);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+
+  /* Typography */
+  --text-display-lg: var(--text-display-lg);
+  --leading-display-lg: var(--leading-display-lg);
+  --tracking-display-lg: var(--tracking-display-lg);
+  --font-weight-display-lg: var(--font-display-lg);
+
+  --text-headline-lg: var(--text-headline-lg);
+  --leading-headline-lg: var(--leading-headline-lg);
+  --tracking-headline-lg: var(--tracking-headline-lg);
+  --font-weight-headline-lg: var(--font-headline-lg);
+
+  --text-title-md: var(--text-title-md);
+  --leading-title-md: var(--leading-title-md);
+  --tracking-title-md: var(--tracking-title-md);
+  --font-weight-title-md: var(--font-title-md);
+
+  --text-body-md: var(--text-body-md);
+  --leading-body-md: var(--leading-body-md);
+  --tracking-body-md: var(--tracking-body-md);
+  --font-weight-body-md: var(--font-body-md);
+
+  --text-label-sm: var(--text-label-sm);
+  --leading-label-sm: var(--leading-label-sm);
+  --tracking-label-sm: var(--tracking-label-sm);
+
+  /* Spacing */
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+
+  /* Radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+/* =========================
+   🧩 BASE STYLES
+========================= */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-family-base), system-ui;
+}
