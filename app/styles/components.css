@@ -14,11 +14,10 @@
   cursor: pointer;
 }
 
-
 .btn-primary {
   background: var(--primary-container);
   color: #fff;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 .btn-secondary {
@@ -54,7 +53,6 @@
   color: var(--text-error);
 }
 
-
 .card {
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
@@ -63,12 +61,10 @@
   padding: 48px;
 }
 
-
-
 .badge {
   display: inline-flex;
-  padding: 2px 10px;
-  border-radius: var(--radius-sm);
+  padding: 4px 12px;
+  border-radius: var(--radius-lg);
 
   font-size: 11px;
   font-weight: 700;
@@ -76,4 +72,11 @@
 
   background: var(--surface-highest);
   color: var(--primary-container);
+}
+
+.icon {
+  padding: 8px;
+  border-radius: 4px;
+  background: var(--foreground);
+  color: var(--primary);
 }
