@@ -26,8 +26,8 @@ export function SignUpForm() {
     formState: { errors, isValid, isSubmitting },
   } = form;
 
-  // const password = useWatch({ control: form.control, name: "password" });
-  const password = "asasasassaA1@";
+  const password = useWatch({ control: form.control, name: "password" });
+  // const password = "asasasassaA1@";
   const rules = usePasswordValidation(password || "");
   console.log("rules", rules);
   const items = getPasswordChecklistItems(rules);

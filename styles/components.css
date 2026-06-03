@@ -42,6 +42,10 @@
   color: var(--text-primary);
 }
 
+.input::placeholder {
+  color: var(--text-placeholder);
+}
+
 .input:focus-visible {
   outline: 2px solid var(--primary-container);
   outline-offset: 2px;
@@ -50,6 +54,9 @@
 .input-error {
   background: var(--input-bg-error);
   border-color: var(--error);
+  color: var(--text-error);
+}
+.input-error::placeholder {
   color: var(--text-error);
 }
 

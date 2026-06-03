@@ -30,7 +30,7 @@
   --foreground: #002113;
 
   /* INPUT */
-  --input-bg: var(--surface-low);
+  --input-bg: var(--surface-highest);
   --input-bg-error: #ffdad6;
   --input-border: #c3c6d6;
 
