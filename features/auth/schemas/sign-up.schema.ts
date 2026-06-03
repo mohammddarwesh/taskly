@@ -4,7 +4,7 @@ const nameRegex = /^[\p{L}]+(?:[\p{L}]+)*$/u;
 
 const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
-export const signUPSchema = z
+export const signUpSchema = z
   .object({
     name: z
       .string()
@@ -19,7 +19,7 @@ export const signUPSchema = z
       .string()
       .trim()
       .pipe(z.email({ error: "Please enter a valid email address" })),
-    passWord: z
+    password: z
       .string()
       .min(8, { error: "Password must be at least 8 characters" })
       .max(64, { error: "Password must not exceed 64 character" })
@@ -39,22 +39,10 @@ export const signUPSchema = z
         error: "Password must contain at least one special character",
       }),
     confirmPassword: z.string(),
-    jobTitle: z.preprocess(
-      (value) => {
-        if (typeof value === "string") {
-          const trimmed = value.trim();
-          return trimmed === "" ? undefined : trimmed;
-        }
-        return value;
-      },
-      z
-        .string()
-        .max(100, { error: "Job must not exceed 200 character" })
-        .optional(),
-    ),
+    jobTitle: z.string().trim().optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.passWord !== data.confirmPassword) {
+    if (data.password !== data.confirmPassword) {
       ctx.addIssue({
         code: "custom",
         path: ["confirmPassword"],
@@ -62,3 +50,5 @@ export const signUPSchema = z
       });
     }
   });
+
+export type SignUpSchema = z.infer<typeof signUpSchema>;
