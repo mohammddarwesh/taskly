@@ -7,15 +7,20 @@
   border-radius: var(--radius-xs);
 
   font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.4px;
+  font-weight: 600;
+  letter-spacing: 0px;
   text-transform: uppercase;
 
   cursor: pointer;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 }
 
 .btn-primary {
-  background: var(--primary-container);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-container) 100%
+  );
   color: #fff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
@@ -64,7 +69,7 @@
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-
+  box-shadow: 0px 24px 48px 0px rgba(4, 27, 60, 0.06);
   padding: 48px;
 }
 

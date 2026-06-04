@@ -2,7 +2,7 @@ import z from "zod";
 
 const nameRegex = /^[\p{L}]+(?:[\p{L}]+)*$/u;
 
-const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+const specialCharRegex = /(?=.*[!@#$%^&*(),.?":{}|<>_\-])/;
 
 export const signUpSchema = z
   .object({
