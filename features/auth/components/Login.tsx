@@ -12,8 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { apiClient } from "@/libs/api-client";
 import { useRouter } from "next/navigation";
-// import { toast } from "react-toastify";
-// import { ApiError } from "@/types/apiError.types";
+import { toast } from "react-toastify";
+import { ApiError } from "@/types/apiError.types";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -54,17 +54,17 @@ export function LoginForm() {
       router.refresh();
     } catch (error) {
       console.error("#loginError", error);
-      // const { message } = error as ApiError;
-      // toast.error(message ||"something went wrong", {
-      //   position: "bottom-right",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      // });
+      const { msg } = error as ApiError;
+      toast.error(msg || "something went wrong", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   return (
@@ -101,10 +101,15 @@ export function LoginForm() {
           }
         />
         {/* REMEMBER ME */}
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" {...register("rememberMe")} />
-          Remember Me
-        </label>
+        <div className=" flex justify-between">
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" {...register("rememberMe")} />
+            Remember Me
+          </label>
+          <Link href="/forgot-password" className="text-primary">
+            Forgot Password?
+          </Link>
+        </div>
 
         {/* ROOT ERROR */}
         {errors.root && (

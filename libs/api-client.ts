@@ -26,11 +26,11 @@ export async function apiClient<T>(endpoint: string, options: ApiOptions = {}): 
 
     if (!res.ok) {
         const error: ApiError = {
-            status: res.status,
-            message: data.msg || "API ERROR",
-            code: data.error_code || "UNKNOWN_ERROR"
+            code: data.code,
+            msg: data.msg || "API ERROR",
+            error_code: data.error_code || "UNKNOWN_ERROR"
         }
-        throw new Error(error.message)
+        throw error
     }
     return data
 }

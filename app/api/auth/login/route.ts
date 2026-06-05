@@ -4,14 +4,14 @@ import { ApiError } from "@/types/apiError.types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-    const baseurl = process.env.NEXT_PUBLIC_BACKEND_URL;
+    const backendURL = process.env.BACKEND_URL;
     const apikey = process.env.API_KEY;
     try {
         const body = await request.json();
         console.log("sign up Body", body);
 
         const data = await apiClient<SupaAuthResponse>(
-            `${baseurl}/auth/v1/token?grant_type=password`,
+            `${backendURL}/auth/v1/token?grant_type=password`,
             {
                 method: "POST",
                 headers: {
@@ -41,15 +41,15 @@ export async function POST(request: Request) {
         return res
     } catch (error) {
         console.error("LOGIN_ERROR", error);
-        const { message, code, status } = error as ApiError
+        const { msg, code, error_code } = error as ApiError
         return NextResponse.json(
             {
                 success: false,
-                message: message || "Internal server error",
+                msg: msg || "Internal server error",
                 code: code || "SERVER_ERROR",
             },
             {
-                status: status || 500,
+                status: +error_code || 500,
             },
         );
     }
