@@ -3,7 +3,7 @@
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { SignUpSchema, signUpSchema } from "../schemas/sign-up.schema";
+import { loginSchema, LoginSchema } from "../schemas/login.schema";
 import { usePasswordValidation } from "../hooks/usePasswordValidation";
 import { getPasswordChecklistItems } from "../utils/getPasswordChecklistItems";
 import PasswordChecklist from "./PasswordChecklist";
@@ -13,75 +13,54 @@ import Head from "@/components/ui/Head";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { apiClient } from "@/libs/api-client";
 
-export function SignUpForm() {
+export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
-  const form = useForm<SignUpSchema>({
-    resolver: zodResolver(signUpSchema),
+
+  const form = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
     mode: "all",
     reValidateMode: "onChange",
     defaultValues: {
-      name: "",
       email: "",
       password: "",
-      confirmPassword: "",
-      jobTitle: "",
     },
   });
 
   const {
+    register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
   } = form;
 
-  const password = useWatch({ control: form.control, name: "password" });
-  // const password = "asasasassaA1@";
-  const rules = usePasswordValidation(password || "");
-  // console.log("rules", rules);
-  const items = getPasswordChecklistItems(rules);
-
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
-  const onSubmit = async (data: SignUpSchema) => {
+  const onSubmit = async (data: LoginSchema) => {
     const formattedData = {
       email: data.email,
       password: data.password,
-      data: {
-        name: data.name,
-        job_title: data.jobTitle,
-      },
     };
-    console.log("submit data", formattedData);
+    console.log("#login_form submit data", formattedData);
     try {
-      const response = await apiClient("/api/auth/signUp", {
+      const res = await apiClient("/api/auth/Login", {
         method: "POST",
         body: formattedData,
       });
 
-      console.log("SUCCESS", response);
-      router.push("/project");
+      console.log("Login SUCCESS", res);
     } catch (error) {
       console.error(error);
     }
   };
   return (
-    <div className="card max-w-xl m-auto">
+    <div className="card w-full max-w-120 m-auto">
       <Head
-        head="Create your workspace"
-        sub="Join the editorial approach to task management."
+        head="Welcome Back"
+        sub="Please enter your details to access your workspace"
       />
       <form onSubmit={handleSubmit(onSubmit)} className=" flex flex-col gap-6">
-        {/* NAME */}
-        <Input
-          label="Name"
-          placeholder="Enter your name"
-          {...form.register("name")}
-          error={form.formState.errors.name?.message}
-        />
         {/* EMAIL */}
         <Input
           label="Email"
@@ -89,13 +68,6 @@ export function SignUpForm() {
           placeholder="Enter your email"
           {...form.register("email")}
           error={form.formState.errors.email?.message}
-        />
-        {/* JOB TITLE */}
-        <Input
-          label="Job Title (optional)"
-          placeholder="Frontend Developer"
-          {...form.register("jobTitle")}
-          error={form.formState.errors.jobTitle?.message}
         />
         {/* PASSWORD */}
         <div className="flex grow justify-start gap-2 flex-col md:flex-row">
@@ -118,18 +90,7 @@ export function SignUpForm() {
               }
             />
           </div>
-          {/* CONFIRM PASSWORD */}
-
-          <Input
-            label="Confirm Password"
-            type="password"
-            placeholder="Confirm password"
-            {...form.register("confirmPassword")}
-            error={form.formState.errors.confirmPassword?.message}
-          />
         </div>
-        {/* PASSWORD CHECKLIST */}
-        <PasswordChecklist items={items} />
         {/* SUBMIT BUTTON */}
         <Button
           type="submit"
@@ -138,13 +99,13 @@ export function SignUpForm() {
           disabled={isSubmitting}
           className="rounded-b-lg py-4"
         >
-          Create Account
+          Log in
         </Button>
       </form>
       <div className="flex items-center justify-center mt-8 text-sm">
-        <p className="text-slate-600 ">Already have an account?</p>
-        <Link className="text-primary font-semibold ml-1" href="/login">
-          Log in
+        <p className="text-slate-600 ">Don&apos;t have an account?</p>
+        <Link className="text-primary font-semibold ml-1" href="/sign-up">
+          Sign Up
         </Link>
       </div>
     </div>

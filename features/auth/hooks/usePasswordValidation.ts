@@ -1,4 +1,4 @@
-import { PasswordRules } from "../types";
+import { PasswordRules } from "../types/signup.types";
 import { useMemo } from "react";
 
 export function usePasswordValidation(password: string) {

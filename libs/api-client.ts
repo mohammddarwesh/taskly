@@ -1,16 +1,16 @@
 
 type ApiOptions = {
     method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
-    body?: Body,
+    body?: Record<string, unknown>,
     headers?: Record<string, string>
 }
 
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 
-export async function apiCLient<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
-    const res = await fetch(`${BASE_URL}${endpoint}`,
+export async function apiClient<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
+    console.log("apiCLient options", options.headers)
+    const res = await fetch(endpoint,
         {
             method: options.method || "GET",
             headers: {

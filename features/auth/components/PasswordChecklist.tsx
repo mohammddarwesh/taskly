@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { checkListItems } from "../types";
+import { checkListItems } from "../types/signup.types";
 
 type props = { items: checkListItems };
 export default function PasswordChecklist({ items }: props) {

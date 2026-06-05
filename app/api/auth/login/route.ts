@@ -1,19 +1,19 @@
-import { apiClient } from "@/libs/api-client";
+import { apiCLient } from "@/libs/api-client";
 import { SupaAuthResponse } from "@/types";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-    const baseurl = process.env.NEXT_PUBLIC_BACKEND_URL
-    const api_key = process.env.API_KEY;
+    const baseurl = process.env.NEXT_PUBLIC_BACKEND_BASEURL;
+    const apikey = process.env.API_KEY;
     try {
         const body = await request.json();
         console.log("sign up Body", body);
 
-        const data = await apiClient<SupaAuthResponse>(`${baseurl}/auth/v1/signup`, {
+        const data = await apiCLient<SupaAuthResponse>(`${baseurl}/auth/v1/signup`, {
             method: "POST",
             headers: {
-                apikey: api_key!,
+                apikey: apikey!,
             },
             body,
         });

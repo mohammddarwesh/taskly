@@ -1,4 +1,4 @@
-import { checkListItems, PasswordRules } from "../types";
+import { checkListItems, PasswordRules } from "../types/signup.types";
 
 export function getPasswordChecklistItems(rules: PasswordRules): checkListItems {
   return [

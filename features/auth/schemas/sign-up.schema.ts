@@ -22,11 +22,11 @@ export const signUpSchema = z
     password: z
       .string()
       .min(8, { error: "Password must be at least 8 characters" })
-      .max(64, { error: "Password must not exceed 64 character" })
+      .max(64, { error: "Password must not exceed 64 characters" })
       .refine((value) => !/\s/.test(value), {
         error: "Password must not contain spaces",
       })
-      .refine((value) => /[A-z]/.test(value), {
+      .refine((value) => /[A-Z]/.test(value), {
         error: "Password must contain at least one uppercase letter",
       })
       .refine((value) => /[a-z]/.test(value), {
