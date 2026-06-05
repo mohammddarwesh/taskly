@@ -1,12 +1,9 @@
 "use client";
 
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { loginSchema, LoginSchema } from "../schemas/login.schema";
-import { usePasswordValidation } from "../hooks/usePasswordValidation";
-import { getPasswordChecklistItems } from "../utils/getPasswordChecklistItems";
-import PasswordChecklist from "./PasswordChecklist";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import Head from "@/components/ui/Head";
@@ -14,10 +11,11 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { apiClient } from "@/libs/api-client";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-
+  const router = useRouter();
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     mode: "all",
@@ -44,12 +42,14 @@ export function LoginForm() {
     };
     console.log("#login_form submit data", formattedData);
     try {
-      const res = await apiClient("/api/auth/Login", {
+      const res = await apiClient("/api/auth/login", {
         method: "POST",
         body: formattedData,
       });
 
       console.log("Login SUCCESS", res);
+      router.push("/");
+      router.refresh();
     } catch (error) {
       console.error(error);
     }
@@ -67,30 +67,36 @@ export function LoginForm() {
           type="email"
           placeholder="Enter your email"
           {...form.register("email")}
-          error={form.formState.errors.email?.message}
+          error={errors.email?.message}
         />
         {/* PASSWORD */}
-        <div className="flex grow justify-start gap-2 flex-col md:flex-row">
-          <div className="relative w-full">
-            <Input
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter password"
-              {...form.register("password")}
-              error={form.formState.errors.password?.message}
-              icon={
-                <Image
-                  src={showPassword ? "/icons/eyeOff.svg" : "/icons/eye.svg"}
-                  width={22}
-                  height={15}
-                  alt="showPassword"
-                  onClick={toggleShowPassword}
-                  className="cursor-pointer"
-                />
-              }
+        <Input
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          placeholder="Enter password"
+          {...form.register("password")}
+          error={errors.password?.message}
+          icon={
+            <Image
+              src={showPassword ? "/icons/eyeOff.svg" : "/icons/eye.svg"}
+              width={22}
+              height={15}
+              alt="showPassword"
+              onClick={toggleShowPassword}
+              className="cursor-pointer"
             />
-          </div>
-        </div>
+          }
+        />
+        {/* REMEMBER ME */}
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" {...register("rememberMe")} />
+          Remember Me
+        </label>
+
+        {/* ROOT ERROR */}
+        {errors.root && (
+          <p className="text-sm text-red-500">{errors.root.message}</p>
+        )}
         {/* SUBMIT BUTTON */}
         <Button
           type="submit"

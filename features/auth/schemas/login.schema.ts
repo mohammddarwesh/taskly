@@ -9,7 +9,8 @@ export const loginSchema = z
       .pipe(z.email({ error: "Please enter a valid email address" })),
     password: z
       .string()
-      .min(1, { error: "Please enter a Password" })
+      .min(1, { error: "Please enter a Password" }),
+    rememberMe: z.boolean()
   });
 
 export type LoginSchema = z.infer<typeof loginSchema>;

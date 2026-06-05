@@ -33,11 +33,13 @@ export function SignUpForm() {
   });
 
   const {
+    register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
+    control,
+    formState: { errors, isSubmitting },
   } = form;
 
-  const password = useWatch({ control: form.control, name: "password" });
+  const password = useWatch({ control: control, name: "password" });
   // const password = "asasasassaA1@";
   const rules = usePasswordValidation(password || "");
   // console.log("rules", rules);
@@ -64,6 +66,7 @@ export function SignUpForm() {
 
       console.log("SUCCESS", response);
       router.push("/project");
+      router.refresh();
     } catch (error) {
       console.error(error);
     }
@@ -79,23 +82,23 @@ export function SignUpForm() {
         <Input
           label="Name"
           placeholder="Enter your name"
-          {...form.register("name")}
-          error={form.formState.errors.name?.message}
+          {...register("name")}
+          error={errors.name?.message}
         />
         {/* EMAIL */}
         <Input
           label="Email"
           type="email"
           placeholder="Enter your email"
-          {...form.register("email")}
-          error={form.formState.errors.email?.message}
+          {...register("email")}
+          error={errors.email?.message}
         />
         {/* JOB TITLE */}
         <Input
           label="Job Title (optional)"
           placeholder="Frontend Developer"
-          {...form.register("jobTitle")}
-          error={form.formState.errors.jobTitle?.message}
+          {...register("jobTitle")}
+          error={errors.jobTitle?.message}
         />
         {/* PASSWORD */}
         <div className="flex grow justify-start gap-2 flex-col md:flex-row">
@@ -104,8 +107,8 @@ export function SignUpForm() {
               label="Password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter password"
-              {...form.register("password")}
-              error={form.formState.errors.password?.message}
+              {...register("password")}
+              error={errors.password?.message}
               icon={
                 <Image
                   src={showPassword ? "/icons/eyeOff.svg" : "/icons/eye.svg"}
@@ -124,8 +127,8 @@ export function SignUpForm() {
             label="Confirm Password"
             type="password"
             placeholder="Confirm password"
-            {...form.register("confirmPassword")}
-            error={form.formState.errors.confirmPassword?.message}
+            {...register("confirmPassword")}
+            error={errors.confirmPassword?.message}
           />
         </div>
         {/* PASSWORD CHECKLIST */}

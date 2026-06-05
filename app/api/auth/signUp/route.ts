@@ -17,22 +17,25 @@ export async function POST(request: Request) {
             },
             body,
         });
-        (await cookies()).set("accessToken", data.access_token, {
+        const res = NextResponse.json({
+            success: true,
+            user: data.user,
+        });
+        res.cookies.set("access_token", data.access_token, {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
-            expires: new Date(data.expires_at * 1000)
-        })
-
-            ; (await cookies()).set("refresh_token", data.refresh_token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                path: "/",
-
-            })
-        return NextResponse.json(data);
+            expires: new Date(data.expires_at * 1000),
+        });
+        res.cookies.set("refresh_token", data.access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: body.rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
+        });
+        return res
     } catch (error) {
         console.error("SIGNUP_ERROR", error);
         return NextResponse.json(
