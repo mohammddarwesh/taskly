@@ -12,6 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { apiClient } from "@/libs/api-client";
 import { useRouter } from "next/navigation";
+// import { toast } from "react-toastify";
+// import { ApiError } from "@/types/apiError.types";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +31,7 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isSubmitting },
   } = form;
 
   const toggleShowPassword = () => {
@@ -51,7 +53,18 @@ export function LoginForm() {
       router.push("/");
       router.refresh();
     } catch (error) {
-      console.error(error);
+      console.error("#loginError", error);
+      // const { message } = error as ApiError;
+      // toast.error(message ||"something went wrong", {
+      //   position: "bottom-right",
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: false,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "light",
+      // });
     }
   };
   return (

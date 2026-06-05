@@ -1,6 +1,6 @@
 import { apiClient } from "@/libs/api-client";
 import { SupaAuthResponse } from "@/types";
-import { cookies } from "next/headers";
+import { ApiError } from "@/types/apiError.types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
             path: "/",
             expires: new Date(data.expires_at * 1000),
         });
-        res.cookies.set("refresh_token", data.access_token, {
+        res.cookies.set("refresh_token", data.refresh_token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
@@ -40,12 +40,17 @@ export async function POST(request: Request) {
         });
         return res
     } catch (error) {
-        console.error("SIGNUP_ERROR", error);
+        console.error("LOGIN_ERROR", error);
+        const { message, code, status } = error as ApiError
         return NextResponse.json(
             {
-                message: "Internal server error",
+                success: false,
+                message: message || "Internal server error",
+                code: code || "SERVER_ERROR",
             },
-            { status: 500 },
+            {
+                status: status || 500,
+            },
         );
     }
 }

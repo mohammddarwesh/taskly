@@ -1,3 +1,4 @@
+import { ApiError } from "@/types/apiError.types"
 
 type ApiOptions = {
     method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
@@ -21,9 +22,15 @@ export async function apiClient<T>(endpoint: string, options: ApiOptions = {}): 
         },
     )
     const data = await res.json()
+    console.log("api client data", data.msg)
 
     if (!res.ok) {
-        throw new Error(data.message || "API Error")
+        const error: ApiError = {
+            status: res.status,
+            message: data.msg || "API ERROR",
+            code: data.error_code || "UNKNOWN_ERROR"
+        }
+        throw new Error(error.message)
     }
     return data
 }
