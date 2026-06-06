@@ -1,5 +1,6 @@
 import { apiClient } from "@/libs/api-client";
 import { SupaAuthResponse } from "@/types";
+import { ApiError } from "@/types/apiError.types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -37,11 +38,12 @@ export async function POST(request: Request) {
         return res
     } catch (error) {
         console.error("SIGNUP_ERROR", error);
+        const { msg ,code} = error as ApiError
         return NextResponse.json(
             {
-                message: "Internal server error",
+                msg: msg || "Internal server error",
             },
-            { status: 500 },
+            { status: code || 500 },
         );
     }
 }

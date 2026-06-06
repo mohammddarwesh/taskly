@@ -15,6 +15,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/libs/api-client";
+import { toast } from "react-toastify";
+import { ApiError } from "@/types/apiError.types";
 
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -68,7 +70,9 @@ export function SignUpForm() {
       router.push("/project");
       router.refresh();
     } catch (error) {
-      console.error(error);
+      console.error("#sign-upForm ", error);
+      const { msg } = error as ApiError;
+      toast.error(msg);
     }
   };
   return (
