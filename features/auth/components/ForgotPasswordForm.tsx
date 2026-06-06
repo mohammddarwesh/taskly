@@ -11,6 +11,7 @@ import {
   ForgotPasswordSchema,
 } from "../schemas/forgotPassword.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 
 export default function ForgotPasswordForm() {
   const [cooldown, setCooldown] = useState(0);
@@ -107,6 +108,13 @@ export default function ForgotPasswordForm() {
           <p className="text-red-500 text-sm">Max attempts reached</p>
         )}
       </form>
+
+      <div className="flex items-center justify-center mt-8 text-sm">
+        <p className="text-slate-600">Back to</p>
+        <Link className="text-primary font-semibold ml-1" href="/login">
+          Log in
+        </Link>
+      </div>
     </div>
   );
 }
