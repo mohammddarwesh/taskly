@@ -1,6 +1,6 @@
 import z from "zod";
 
-const nameRegex = /^[\p{L}]+(?:[\p{L}]+)*$/u;
+const nameRegex = /^\p{L}+(?: \p{L}+)*$/u;
 
 const specialCharRegex = /(?=.*[!@#$%^&*(),.?":{}|<>_\-])/;
 
