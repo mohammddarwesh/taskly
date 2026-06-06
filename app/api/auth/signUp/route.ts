@@ -3,7 +3,7 @@ import { SupaAuthResponse } from "@/types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-    const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL
+    const backendURL = process.env.BACKEND_URL
     const api_key = process.env.API_KEY;
     try {
         const body = await request.json();
