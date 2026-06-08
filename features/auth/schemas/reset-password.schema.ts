@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-const nameRegex = /^[\p{L}]+(?:[\p{L}]+)*$/u;
 const specialCharRegex = /(?=.*[!@#$%^&*(),.?":{}|<>_\-])/;
 
 export const resetPasswordSchema = z

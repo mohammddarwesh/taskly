@@ -1,0 +1,32 @@
+import { NextResponse } from "next/server";
+import { apiClient } from "@/libs/api-client";
+
+export async function POST(req: Request) {
+    try {
+        const { email } = await req.json();
+
+        await apiClient(`${process.env.BACKEND_BASEURL}/auth/v1/recover`, {
+            method: "POST",
+            headers: {
+                apikey: process.env.API_KEY!,
+                "Content-Type": "application/json",
+            },
+            body: email,
+        });
+
+        return NextResponse.json({
+            success: true,
+            message:
+                "If an account exists with this email, we’ve sent a password reset link.",
+        });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json(
+            {  success: false,
+                message:
+                    "If an account exists with this email, we’ve sent a password reset link.",
+            },
+            { status: 200 },
+        );
+    }
+}

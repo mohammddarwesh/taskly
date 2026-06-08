@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import {
   forgotPasswordSchema,
   ForgotPasswordSchema,
-} from "../schemas/forgotPassword.schema";
+} from "../schemas/forgot-password.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 
@@ -46,7 +46,6 @@ export default function ForgotPasswordForm() {
     setSent(true);
   };
 
-  // countdown
   useEffect(() => {
     if (cooldown <= 0) return;
 
