@@ -12,7 +12,7 @@ export async function POST(req: Request) {
             headers: {
                 apikey: process.env.API_KEY!,
             },
-            body: { ...body, redirect_to: REDIRECT_URL },
+            body: { ...body, redirect_to: REDIRECT_URL, redirectTo: REDIRECT_URL },
         });
 
         return NextResponse.json({
