@@ -1,6 +1,5 @@
 import { apiClient } from "@/libs/api-client";
 import { NextResponse } from "next/server";
-import { success } from "zod";
 
 export async function PUT(request: Request) {
     const backendURL = process.env.BACKEND_URL;

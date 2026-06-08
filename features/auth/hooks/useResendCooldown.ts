@@ -36,16 +36,13 @@ export const useResendCooldown = () => {
 
     useEffect(() => {
         if (timeLeft <= 0) return;
-
         const interval = setInterval(() => {
             setCooldown((prev) => {
                 const newTimeLeft = Math.max(prev.timeLeft - 1, 0);
-
                 if (newTimeLeft === 0 && prev.attempts > 0) {
                     localStorage.removeItem(STORAGE_KEY);
                     return { attempts: 0, timeLeft: 0 };
                 }
-
                 return { ...prev, timeLeft: newTimeLeft };
             });
         }, 1000);

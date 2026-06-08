@@ -3,7 +3,7 @@ import { apiClient } from "@/libs/api-client";
 
 export async function POST(req: Request) {
 
-    const REDIRECT_URL = "https://tasklymangment.netlify.app/reset-password";
+    const REDIRECT_URL = process.env.REDIRECT_URL;
     try {
         const body = await req.json();
 
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
             },
             body: { ...body, redirect_to: REDIRECT_URL, redirectTo: REDIRECT_URL },
         });
-
+        console.log("FORGOT PASSWORD_PUT ROUTE", { ...body, redirect_to: REDIRECT_URL, redirectTo: REDIRECT_URL },)
         return NextResponse.json({
             success: true,
             message:
