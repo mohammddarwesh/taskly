@@ -40,11 +40,11 @@ export default function ForgotPasswordForm() {
   const onSubmit = async (data: ForgotPasswordSchema) => {
     setSent(false);
     await submit(data.email);
-    // if (!success) {
-    startCooldown();
-    // } else {
-    setSent(true);
-    // }
+    if (!success) {
+      startCooldown();
+    } else {
+      setSent(true);
+    }
   };
 
   const formatTime = (s: number) =>

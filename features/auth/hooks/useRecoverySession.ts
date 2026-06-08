@@ -1,24 +1,35 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const getSessionFromHash = () => {
-  if (typeof window === "undefined") return { accessToken: null, isValidRecovery: false };
-  const params = new URLSearchParams(window.location.hash.substring(1));
-  const accessToken = params.get("access_token");
-  const type = params.get("type");
-  return { accessToken, isValidRecovery: type === "recovery" && !!accessToken };
+type RecoverySession = {
+    accessToken: string | null;
+    isValidRecovery: boolean;
+    isLoading: boolean;
 };
 
-export const useRecoverySession = () => {
-  const [session, setSession] = useState(getSessionFromHash);
+const getSessionFromHash = (): Omit<RecoverySession, "isLoading"> => {
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = params.get("access_token");
+    const type = params.get("type");
+    return { accessToken, isValidRecovery: type === "recovery" && !!accessToken };
+};
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      setSession(getSessionFromHash()); 
-    };
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+export const useRecoverySession = (): RecoverySession => {
+    const [session, setSession] = useState<RecoverySession>({
+        accessToken: null,
+        isValidRecovery: false,
+        isLoading: true,
+    });
 
-  return session;
+    useEffect(() => {
+        const handleHashChange = () => {
+            setSession({ ...getSessionFromHash(), isLoading: false });
+        };
+
+        handleHashChange();
+        window.addEventListener("hashchange", handleHashChange);
+        return () => window.removeEventListener("hashchange", handleHashChange);
+    }, []);
+
+    return session;
 };

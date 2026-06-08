@@ -5,7 +5,9 @@ import { useRecoverySession } from "@/features/auth/hooks/useRecoverySession";
 import Link from "next/link";
 
 export default function ResetPasswordPage() {
-  const { accessToken, isValidRecovery } = useRecoverySession();
+  const { accessToken, isValidRecovery, isLoading } = useRecoverySession();
+  if (isLoading) return null;
+
   if (!isValidRecovery || !accessToken) {
     return (
       <div role="alert" className="text-red-600">
