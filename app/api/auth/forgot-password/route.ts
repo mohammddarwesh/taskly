@@ -5,14 +5,14 @@ export async function POST(req: Request) {
 
     const REDIRECT_URL = "https://tasklymangment.netlify.app/reset-password";
     try {
-        const { email } = await req.json();
+        const body = await req.json();
 
         await apiClient(`${process.env.BACKEND_URL}/auth/v1/recover`, {
             method: "POST",
             headers: {
                 apikey: process.env.API_KEY!,
             },
-            body: { email, redirect_to: REDIRECT_URL },
+            body: { ...body, redirect_to: REDIRECT_URL },
         });
 
         return NextResponse.json({

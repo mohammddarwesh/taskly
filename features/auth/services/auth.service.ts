@@ -1,8 +1,8 @@
 import { apiClient } from "@/libs/api-client"
-
+const REDIRECT_URL = "https://tasklymangment.netlify.app/reset-password";
 export const authService = {
     forgotPassword: async (email: string) => {
-        const response = await apiClient("/api/auth/forgot-password", { body: { email }, method: "POST" })
+        const response = await apiClient("/api/auth/forgot-password", { body: { email, redirect_to: REDIRECT_URL }, method: "POST" })
         return response
     },
     resetPassword: async (accessToken: string, password: string) => {

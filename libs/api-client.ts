@@ -11,6 +11,7 @@ type ApiOptions = {
 
 export async function apiClient<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
     console.log("apiCLient options", options.headers)
+    console.log("api client data REQ", options.body)
     const res = await fetch(endpoint,
         {
             method: options.method || "GET",
@@ -22,7 +23,7 @@ export async function apiClient<T>(endpoint: string, options: ApiOptions = {}): 
         },
     )
     const data = await res.json()
-    console.log("api client data", data.msg)
+    console.log("api client data RES", data)
 
     if (!res.ok) {
         const error: ApiError = {
