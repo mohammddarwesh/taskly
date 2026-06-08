@@ -1,4 +1,3 @@
-// app/(auth)/reset-password/page.tsx
 "use client";
 
 import { ResetPasswordForm } from "@/features/auth/components/ResetPasswordForm";

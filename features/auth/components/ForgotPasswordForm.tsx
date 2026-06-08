@@ -1,6 +1,6 @@
 "use client";
 
-import {  useState } from "react";
+import { useState } from "react";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import Head from "@/components/ui/Head";
@@ -90,7 +90,7 @@ export default function ForgotPasswordForm() {
         {timeLeft > 0 && (
           <p className="text-sm">Try again in: {formatTime(timeLeft)}</p>
         )}
-        {remainingAttempts >= MAX_ATTEMPTS && (
+        {remainingAttempts && (
           <p className="text-red-500 text-sm">Max attempts reached</p>
         )}
       </form>
