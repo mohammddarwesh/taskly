@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import Head from "@/components/ui/Head";
@@ -12,11 +12,16 @@ import {
 } from "../schemas/forgot-password.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useResendCooldown } from "../hooks/useResendCooldown";
+import useForgotPassword from "../hooks/useForgotPassword";
+import { success } from "zod";
 
 export default function ForgotPasswordForm() {
-  const [cooldown, setCooldown] = useState(0);
-  const [attempts, setAttempts] = useState(0);
+  const MAX_ATTEMPTS = 3;
   const [sent, setSent] = useState(false);
+  const { submit, isLoading, isSuccess, error } = useForgotPassword();
+  const { isDisabled, timeLeft, startCooldown, remainingAttempts } =
+    useResendCooldown();
   const form = useForm<ForgotPasswordSchema>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: "all",
@@ -29,38 +34,19 @@ export default function ForgotPasswordForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
-  const MAX_ATTEMPTS = 3;
+
+  const isButtonDisabled = isSubmitting || isLoading || isDisabled;
 
   const onSubmit = async (data: ForgotPasswordSchema) => {
     setSent(false);
-    await fetch("/api/auth/recover", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: data.email }),
-    });
-
-    setAttempts((p) => p + 1);
-    setCooldown(300); // 5 minutes
-    setSent(true);
+    await submit(data.email);
+    if (!success) {
+      startCooldown();
+    } else {
+      setSent(true);
+    }
   };
 
-  useEffect(() => {
-    if (cooldown <= 0) return;
-
-    const timer = setInterval(() => {
-      setCooldown((t) => {
-        if (t <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return t - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [cooldown]);
   const formatTime = (s: number) =>
     `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
@@ -82,8 +68,8 @@ export default function ForgotPasswordForm() {
         <Button
           type="submit"
           variant="primary"
-          loading={isSubmitting}
-          disabled={isSubmitting || cooldown > 0 || attempts >= MAX_ATTEMPTS}
+          loading={isSubmitting || isLoading}
+          disabled={isButtonDisabled}
           className="rounded-b-lg py-4"
         >
           Send Reset Link
@@ -100,10 +86,11 @@ export default function ForgotPasswordForm() {
             If an account exists with this email, we’ve sent a reset link.
           </p>
         )}
-        {cooldown > 0 && (
-          <p className="text-sm">Try again in: {formatTime(cooldown)}</p>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {timeLeft > 0 && (
+          <p className="text-sm">Try again in: {formatTime(timeLeft)}</p>
         )}
-        {attempts >= MAX_ATTEMPTS && (
+        {remainingAttempts >= MAX_ATTEMPTS && (
           <p className="text-red-500 text-sm">Max attempts reached</p>
         )}
       </form>

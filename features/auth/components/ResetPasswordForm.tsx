@@ -17,23 +17,25 @@ import { getPasswordChecklistItems } from "../utils/getPasswordChecklistItems";
 import { apiClient } from "@/libs/api-client";
 
 import {
-  resetPasswordSchema,
-  type ResetPasswordSchema,
-} from "../schemas/reset-password.schema";
+  confirmPasswordSchema,
+  type ConfirmPasswordSchema,
+} from "../schemas/confirm-password.schema";
+import { useResetPassword } from "../hooks/useResetPassword";
+import { toast } from "react-toastify";
 
 type ResetPasswordFormProps = {
   accessToken: string;
 };
 
-export function ResetPasswordForm({
-  accessToken,
-}: ResetPasswordFormProps) {
+export function ResetPasswordForm({ accessToken }: ResetPasswordFormProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const { submit, isLoading, successMessage, error } =
+    useResetPassword(accessToken);
+
   const router = useRouter();
 
-  const form = useForm<ResetPasswordSchema>({
-    resolver: zodResolver(resetPasswordSchema),
+  const form = useForm<ConfirmPasswordSchema>({
+    resolver: zodResolver(confirmPasswordSchema),
     mode: "all",
     reValidateMode: "onChange",
     defaultValues: {
@@ -57,43 +59,18 @@ export function ResetPasswordForm({
     setShowPassword((prev) => !prev);
   };
 
-  const onSubmit = async (data: ResetPasswordSchema) => {
+  const onSubmit = async (data: ConfirmPasswordSchema) => {
     try {
-      await apiClient("/api/auth/update-password", {
-        method: "PUT",
-        body: {
-          access_token: accessToken,
-          password: data.password,
-        },
-      });
-
-      setSuccessMessage(
-        "Your password has been updated successfully. You can now log in"
-      );
-
-      setTimeout(() => {
-        router.push("/login");
-        router.refresh();
-      }, 3000);
-    } catch (error) {
-      console.error(error);
+      await submit(data.password);
+      toast.success(successMessage);
+    } catch {
+      toast.error(error);
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (successMessage) {
-        setSuccessMessage("");
-      }
-    };
-  }, [successMessage]);
-
   return (
     <div className="card max-w-xl m-auto">
-      <Head
-        head="Reset your password"
-        sub="Enter your new password below."
-      />
+      <Head head="Reset your password" sub="Enter your new password below." />
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex grow justify-start gap-2 flex-col md:flex-row">
@@ -137,7 +114,7 @@ export function ResetPasswordForm({
         <Button
           type="submit"
           variant="primary"
-          loading={isSubmitting}
+          loading={isSubmitting || isLoading}
           disabled={isSubmitting}
           className="rounded-b-lg py-4"
         >

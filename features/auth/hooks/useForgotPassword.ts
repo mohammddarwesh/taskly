@@ -9,7 +9,7 @@ const useForgotPassword = () => {
     const [error, setError] = useState<string | null>(null);
 
 
-    const sumbit = useCallback(async (email: string) => {
+    const submit = useCallback(async (email: string) => {
         try {
             setIsLoading(true);
             setError(null);
@@ -28,7 +28,7 @@ const useForgotPassword = () => {
             setIsLoading(false)
         }
     }, [])
-    return { sumbit, isLoading, isSuccess, error }
+    return { submit, isLoading, isSuccess, error }
 }
 
 export default useForgotPassword
