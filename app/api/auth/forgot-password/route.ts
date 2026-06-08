@@ -5,13 +5,13 @@ export async function POST(req: Request) {
     try {
         const { email } = await req.json();
 
-        await apiClient(`${process.env.BACKEND_BASEURL}/auth/v1/recover`, {
+        await apiClient(`${process.env.BACKEND_URL}/auth/v1/recover`, {
             method: "POST",
             headers: {
                 apikey: process.env.API_KEY!,
                 "Content-Type": "application/json",
             },
-            body: email,
+            body: { email: email },
         });
 
         return NextResponse.json({
@@ -22,7 +22,8 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error(error);
         return NextResponse.json(
-            {  success: false,
+            {
+                success: false,
                 message:
                     "If an account exists with this email, we’ve sent a password reset link.",
             },

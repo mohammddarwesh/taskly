@@ -62,7 +62,7 @@ export function ResetPasswordForm({ accessToken }: ResetPasswordFormProps) {
   const onSubmit = async (data: ConfirmPasswordSchema) => {
     try {
       await submit(data.password);
-      toast.success(successMessage);
+      toast.success(successMessage ||"password updated successfully , you will be redirect to login page in 3 seconds");
     } catch {
       toast.error(error);
     }
