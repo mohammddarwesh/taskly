@@ -90,7 +90,7 @@ export default function ForgotPasswordForm() {
         {timeLeft > 0 && (
           <p className="text-sm">Try again in: {formatTime(timeLeft)}</p>
         )}
-        {remainingAttempts && (
+        {remainingAttempts === 0 && (
           <p className="text-red-500 text-sm">Max attempts reached</p>
         )}
       </form>
