@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { apiClient } from "@/libs/api-client";
 
 export async function POST(req: Request) {
+
+    const REDIRECT_URL = "https://tasklymangment.netlify.app/reset-password";
     try {
         const { email } = await req.json();
 
@@ -9,9 +11,8 @@ export async function POST(req: Request) {
             method: "POST",
             headers: {
                 apikey: process.env.API_KEY!,
-                "Content-Type": "application/json",
             },
-            body: { email: email },
+            body: { email, redirect_to: REDIRECT_URL },
         });
 
         return NextResponse.json({
