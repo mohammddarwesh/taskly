@@ -17,7 +17,7 @@ const PROTECTED_PATHS = [
     "/settings",
 ];
 
-const AUTH_PATHS = ["/login", "/register"];
+const AUTH_PATHS = ["/login", "/sign-up"];
 
 function parsJwtPayload(token: string): JwtPayload | null {
     try {

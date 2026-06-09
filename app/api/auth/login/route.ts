@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const apikey = process.env.API_KEY;
     try {
         const body = await request.json();
-        console.log("sign up Body", body);
+        console.log("Login Body", body);
 
         const data = await apiClient<SupaAuthResponse>(
             `${backendURL}/auth/v1/token?grant_type=password`,

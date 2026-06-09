@@ -14,7 +14,11 @@ import { apiClient } from "@/libs/api-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { ApiError } from "@/types/apiError.types";
-import { clearRedirect, getAuthLink, getRedirectUrl } from "@/libs/redirect-utils";
+import {
+  clearRedirect,
+  getAuthLink,
+  getRedirectUrl,
+} from "@/libs/redirect-utils";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -47,13 +51,11 @@ export function LoginForm() {
   };
 
   const onSubmit = async (data: LoginSchema) => {
-    const { email, password } = data;
-
-    console.log("#login_form submit data", { email, password });
+    console.log("#login_form submit data", data);
     try {
       const res = await apiClient("/api/auth/login", {
         method: "POST",
-        body: { email, password },
+        body: data,
       });
 
       console.log("Login SUCCESS", res);
@@ -141,7 +143,10 @@ export function LoginForm() {
       </form>
       <div className="flex items-center justify-center mt-8 text-sm">
         <p className="text-slate-600 ">Don&apos;t have an account?</p>
-        <Link className="text-primary font-semibold ml-1" href={getAuthLink("/sign-up", redirectTo)} >
+        <Link
+          className="text-primary font-semibold ml-1"
+          href={getAuthLink("/sign-up", redirectTo)}
+        >
           Sign Up
         </Link>
       </div>
