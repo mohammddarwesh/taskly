@@ -10,17 +10,28 @@ import PasswordChecklist from "./PasswordChecklist";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import Head from "@/components/ui/Head";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { apiClient } from "@/libs/api-client";
 import { toast } from "react-toastify";
 import { ApiError } from "@/types/apiError.types";
+import {
+  clearRedirect,
+  getAuthLink,
+  getRedirectUrl,
+} from "@/libs/redirect-utils";
 
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = useMemo(
+    () => getRedirectUrl(searchParams),
+    [searchParams],
+  );
+
   const form = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     mode: "all",
@@ -67,6 +78,12 @@ export function SignUpForm() {
       });
 
       console.log("SUCCESS", response);
+      if (redirectTo) {
+        clearRedirect();
+        router.push(redirectTo);
+        router.refresh();
+        return;
+      }
       router.push("/project");
       router.refresh();
     } catch (error) {
@@ -150,7 +167,10 @@ export function SignUpForm() {
       </form>
       <div className="flex items-center justify-center mt-8 text-sm">
         <p className="text-slate-600 ">Already have an account?</p>
-        <Link className="text-primary font-semibold ml-1" href="/login">
+        <Link
+          className="text-primary font-semibold ml-1"
+          href={getAuthLink("/login", redirectTo)}
+        >
           Log in
         </Link>
       </div>

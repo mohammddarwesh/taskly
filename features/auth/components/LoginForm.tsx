@@ -7,17 +7,24 @@ import { loginSchema, LoginSchema } from "../schemas/login.schema";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import Head from "@/components/ui/Head";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { apiClient } from "@/libs/api-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { ApiError } from "@/types/apiError.types";
+import { clearRedirect, getAuthLink, getRedirectUrl } from "@/libs/redirect-utils";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = useMemo(
+    () => getRedirectUrl(searchParams),
+    [searchParams],
+  );
+
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     mode: "all",
@@ -25,6 +32,7 @@ export function LoginForm() {
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
   });
 
@@ -37,19 +45,24 @@ export function LoginForm() {
   const toggleShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
+
   const onSubmit = async (data: LoginSchema) => {
-    const formattedData = {
-      email: data.email,
-      password: data.password,
-    };
-    console.log("#login_form submit data", formattedData);
+    const { email, password } = data;
+
+    console.log("#login_form submit data", { email, password });
     try {
       const res = await apiClient("/api/auth/login", {
         method: "POST",
-        body: formattedData,
+        body: { email, password },
       });
 
       console.log("Login SUCCESS", res);
+      if (redirectTo) {
+        clearRedirect();
+        router.push(redirectTo);
+        router.refresh();
+        return;
+      }
       router.push("/");
       router.refresh();
     } catch (error) {
@@ -128,7 +141,7 @@ export function LoginForm() {
       </form>
       <div className="flex items-center justify-center mt-8 text-sm">
         <p className="text-slate-600 ">Don&apos;t have an account?</p>
-        <Link className="text-primary font-semibold ml-1" href="/sign-up">
+        <Link className="text-primary font-semibold ml-1" href={getAuthLink("/sign-up", redirectTo)} >
           Sign Up
         </Link>
       </div>

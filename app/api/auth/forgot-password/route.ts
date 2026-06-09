@@ -12,7 +12,7 @@ export async function POST(req: Request) {
             {
                 method: "POST",
                 headers: { apikey: process.env.API_KEY! },
-                body: email,
+                body: {email},
             }
         );
         console.log("FORGOT PASSWORD_PUT ROUTE", { email, redirect_to: REDIRECT_URL, redirectTo: REDIRECT_URL },)
