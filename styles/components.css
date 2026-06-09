@@ -92,3 +92,9 @@
   background: var(--foreground);
   color: var(--primary);
 }
+
+
+@media screen and (max-width: 768px) {
+  .card{padding: 0 24px 74px; width: 100%;}
+
+}
