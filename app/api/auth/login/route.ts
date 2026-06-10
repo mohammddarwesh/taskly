@@ -1,22 +1,21 @@
+import { api_key, backendURL } from "@/constants";
 import { apiClient } from "@/libs/api-client";
 import { setTokenCookies } from "@/libs/cookies";
-import { SupaAuthResponse } from "@/types";
+import { SupaBaseAuthResponse } from "@/types";
 import { ApiError } from "@/types/apiError.types";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-    const backendURL = process.env.BACKEND_URL;
-    const apikey = process.env.API_KEY;
     try {
         const body = await request.json();
         console.log("Login Body", body);
 
-        const data = await apiClient<SupaAuthResponse>(
+        const data = await apiClient<SupaBaseAuthResponse>(
             `${backendURL}/auth/v1/token?grant_type=password`,
             {
                 method: "POST",
                 headers: {
-                    apikey: apikey!,
+                    apikey: api_key!,
                 },
                 body,
             },

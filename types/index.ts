@@ -1,2 +1,2 @@
-import { SupaBaseAuthResponse } from './supaBase.Types';
-export type SupaAuthResponse = SupaBaseAuthResponse
+export * from './user.types';
+export * from './supaBase.Types';

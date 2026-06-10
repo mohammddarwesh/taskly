@@ -1,9 +1,8 @@
+import { api_key, backendURL } from "@/constants";
 import { apiClient } from "@/libs/api-client";
 import { NextResponse } from "next/server";
 
 export async function PUT(request: Request) {
-    const backendURL = process.env.BACKEND_URL;
-    const apikey = process.env.API_KEY!;
 
     try {
         const { access_token, password } = await request.json()
@@ -22,7 +21,7 @@ export async function PUT(request: Request) {
         await apiClient(`${backendURL}/"auth/v1/user"`, {
             method: "PUT",
             headers: {
-                apikey: apikey,
+                apikey: api_key!,
                 Authorization: `Bearer ${access_token}`
             },
             body: { password }

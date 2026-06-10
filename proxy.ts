@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from "next/server";
+import { accessTokenStr, refreshTokenStr } from './constants';
 
 
 type JwtPayload = {
@@ -32,7 +33,7 @@ function parsJwtPayload(token: string): JwtPayload | null {
 
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    const accessToken = request.cookies.get("access_token")?.value;
+    const accessToken = request.cookies.get(accessTokenStr)?.value;
 
     if (accessToken && AUTH_PATHS.includes(pathname))
         return NextResponse.redirect(new URL("/", request.url));
@@ -63,8 +64,8 @@ export async function proxy(request: NextRequest) {
                 return response
             } else {
                 const response = NextResponse.redirect(new URL('/login', request.url))
-                response.cookies.delete('access_token')
-                response.cookies.delete('refresh_token')
+                response.cookies.delete(accessTokenStr)
+                response.cookies.delete(refreshTokenStr)
                 return response
             }
 

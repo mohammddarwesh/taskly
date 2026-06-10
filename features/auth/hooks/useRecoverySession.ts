@@ -1,4 +1,5 @@
 "use client";
+import { accessTokenStr } from "@/constants";
 import { useEffect, useState } from "react";
 
 type RecoverySession = {
@@ -9,7 +10,7 @@ type RecoverySession = {
 
 const getSessionFromHash = (): Omit<RecoverySession, "isLoading"> => {
     const params = new URLSearchParams(window.location.hash.substring(1));
-    const accessToken = params.get("access_token");
+    const accessToken = params.get(accessTokenStr);
     const type = params.get("type");
     return { accessToken, isValidRecovery: type === "recovery" && !!accessToken };
 };

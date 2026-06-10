@@ -1,4 +1,5 @@
 // lib/cookies.ts
+import { accessTokenStr, refreshTokenStr } from '@/constants';
 import { NextResponse } from 'next/server';
 
 // ============================================
@@ -124,14 +125,14 @@ export function setTokenCookies(
     tokens.expires_at,
     options?.accessTokenOptions
   );
-  response.cookies.set('access_token', tokens.access_token, accessTokenOptions);
+  response.cookies.set(accessTokenStr, tokens.access_token, accessTokenOptions);
 
   // Set refresh_token
   const refreshTokenOptions = buildRefreshTokenOptions(
     rememberMe,
     options?.refreshTokenOptions
   );
-  response.cookies.set('refresh_token', tokens.refresh_token, refreshTokenOptions);
+  response.cookies.set(refreshTokenStr, tokens.refresh_token, refreshTokenOptions);
 }
 
 /**
@@ -167,8 +168,8 @@ export function clearTokenCookies(
   response: NextResponse,
   additionalCookies: string[] = []
 ): void {
-  response.cookies.delete('access_token');
-  response.cookies.delete('refresh_token');
+  response.cookies.delete(accessTokenStr);
+  response.cookies.delete(refreshTokenStr);
   
   additionalCookies.forEach(cookie => {
     response.cookies.delete(cookie);
@@ -208,7 +209,7 @@ export function setRedirectCookie(
  * Read a cookie from the request
  * 
  * @example
- * const token = getCookie(request, 'access_token');
+ * const token = getCookie(request, accessTokenStr);
  */
 export function getCookie(request: Request, name: string): string | null {
   const cookieHeader = request.headers.get('cookie') || '';

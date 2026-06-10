@@ -2,16 +2,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiClient } from '@/libs/api-client';
 import { setTokenCookies } from '@/libs/cookies';
+import { api_key, backendURL, refreshTokenStr } from '@/constants';
 
 export async function POST(request: NextRequest) {
-  const refreshToken = request.cookies.get('refresh_token')?.value;
+  const refreshToken = request.cookies.get(refreshTokenStr)?.value;
 
   if (!refreshToken) {
     return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
   }
 
-  const backendURL = process.env.BACKEND_URL;
-  const apikey = process.env.API_KEY;
 
   try {
     const data = await apiClient<{
@@ -20,7 +19,7 @@ export async function POST(request: NextRequest) {
       expires_at: number;
     }>(`${backendURL}/auth/v1/token?grant_type=refresh_token`, {
       method: 'POST',
-      headers: { apikey: apikey! },
+      headers: { apikey: api_key! },
       body: { refresh_token: refreshToken },
     });
 
