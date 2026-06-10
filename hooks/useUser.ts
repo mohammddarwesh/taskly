@@ -1,5 +1,4 @@
-// hooks/useUser.ts
-
+"use client"
 import { useEffect, useState } from "react";
 import { userService } from "@/features/auth/services/user.service";
 import { User } from "@/types";
@@ -10,7 +9,7 @@ export const useUser = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchUser = async () => {
+        (async () => {
             try {
                 const data = await userService.getCurrentUser();
                 setUser(data);
@@ -20,9 +19,7 @@ export const useUser = () => {
             } finally {
                 setIsLoading(false);
             }
-        };
-
-        fetchUser();
+        })();
     }, []);
 
     return { user, isLoading, error };
