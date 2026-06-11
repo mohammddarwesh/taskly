@@ -19,11 +19,15 @@ import {
   getAuthLink,
   getRedirectUrl,
 } from "@/libs/redirect-utils";
+import { useAppDispatch } from "@/store/hooks";
+import { loginThunk } from "../store/auth.thunks";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
+
   const redirectTo = useMemo(
     () => getRedirectUrl(searchParams),
     [searchParams],
@@ -53,20 +57,16 @@ export function LoginForm() {
   const onSubmit = async (data: LoginSchema) => {
     console.log("#login_form submit data", data);
     try {
-      const res = await apiClient("/api/auth/login", {
-        method: "POST",
-        body: data,
-      });
-
-      console.log("Login SUCCESS", res);
-      if (redirectTo) {
-        clearRedirect();
-        router.push(redirectTo);
-        router.refresh();
-        return;
+      const resultAction = await dispatch(
+        loginThunk({
+          email: data.email,
+          password: data.password,
+          rememberMe: data.rememberMe,
+        }),
+      ).unwrap();
+      if (resultAction) {
+        router.push("/projects");
       }
-      router.push("/");
-      router.refresh();
     } catch (error) {
       console.error("#loginError", error);
       const { msg } = error as ApiError;

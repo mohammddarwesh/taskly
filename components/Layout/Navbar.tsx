@@ -3,6 +3,8 @@
 import { useUser } from "@/hooks/useUser";
 import { Avatar } from "@/components/ui/Avatar";
 import Image from "next/image";
+import { useAppSelector } from "@/store/hooks";
+import { selectAuthLoading, selectUser } from "@/features/auth/store/auth.selectors";
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -10,7 +12,8 @@ interface NavbarProps {
 }
 
 export function Navbar({ onMenuClick, isMobileMenuOpen }: NavbarProps) {
-  const { user, isLoading } = useUser();
+  const user = useAppSelector(selectUser);
+  const isLoading = useAppSelector(selectAuthLoading);
   console.log("userData NAV", user);
   const userName = user?.user_metadata?.name || "User";
   const userJobTitle = user?.user_metadata?.job_title || "Member";

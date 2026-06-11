@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
-import { useUser } from "@/hooks/useUser";
+import {
+  selectAuthLoading,
+  selectUser,
+} from "@/features/auth/store/auth.selectors";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchUserThunk } from "@/features/auth/store/auth.thunks";
 
 const getInitialCollapsedState = (): boolean => {
   if (typeof window === "undefined") return false;
@@ -15,12 +20,18 @@ const getInitialCollapsedState = (): boolean => {
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(getInitialCollapsedState);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, isLoading } = useUser();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const isLoading = useAppSelector(selectAuthLoading);
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !user) router.push("/login");
-  }, [user, isLoading, router]);
+    if (!isLoading && !user) {
+      dispatch(fetchUserThunk())
+        .unwrap()
+        .catch(() => router.push("/login"));
+    }
+  }, [user, isLoading, router, dispatch]);
 
   useEffect(() => {
     if (typeof window !== "undefined")
