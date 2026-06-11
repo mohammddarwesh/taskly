@@ -58,7 +58,7 @@ export function BottomActions({ isCollapsed, onToggleCollapse }: BottomActionsPr
         `}
         title={isCollapsed ? "Logout" : undefined}
       >
-        <div className="relative w-[18px] h-[18px] flex-shrink-0">
+        <div className="relative w-4.5 h-4.5 shrink-0">
           <Image
             src="/icons/Logout.svg"
             fill

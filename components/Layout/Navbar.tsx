@@ -2,9 +2,7 @@
 
 import { useUser } from "@/hooks/useUser";
 import { Avatar } from "@/components/ui/Avatar";
-import { useState } from "react";
 import Image from "next/image";
-import Logo from "../ui/Logo";
 
 interface NavbarProps {
   onMenuClick: () => void;
