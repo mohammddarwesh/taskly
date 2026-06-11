@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import { Navbar } from "@/components/Layout/Navbar";
+import { Navbar } from "@/components/layout/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +30,6 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <Navbar
-        // onMenuClick={() => console.log("clicked")}
-        // isMobileMenuOpen={false}
-      />
       <body className="min-h-full flex flex-col">
         {children}{" "}
         <ToastContainer

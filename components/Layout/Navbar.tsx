@@ -1,24 +1,26 @@
 "use client";
+
 import { useUser } from "@/hooks/useUser";
+import { Avatar } from "@/components/ui/Avatar";
+import { useState } from "react";
 import Image from "next/image";
 import Logo from "../ui/Logo";
-import { Avatar } from "../ui/Avatar";
 
-type NavbarProps = {
+interface NavbarProps {
   onMenuClick: () => void;
   isMobileMenuOpen: boolean;
-};
+}
 
-export function Navbar({ onMenuClick, isMobileMenuOpen = true }: NavbarProps) {
+export function Navbar({ onMenuClick, isMobileMenuOpen }: NavbarProps) {
   const { user, isLoading } = useUser();
-
+  console.log("userData NAV", user);
   const userName = user?.user_metadata?.name || "User";
-  const userJobTitle = user?.user_metadata?.job_title || "member";
+  const userJobTitle = user?.user_metadata?.job_title || "Member";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-30 bg-background border-b border-{rgba(0, 0, 0, 0.102)]">
-      <div className="flex w-full items-center justify-between  px-4 py-3 lg:px-6">
-        {/* left side - menu button (mobile/tablet only) */}
+    <nav className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+      <div className="flex items-center justify-between  px-4 py-3 lg:px-6">
+        {/* Menu button (mobile/tablet only)  */}
         <button
           onClick={onMenuClick}
           className="p-2 rounded-lg hover:bg-gray-100 lg:hidden"
@@ -31,15 +33,18 @@ export function Navbar({ onMenuClick, isMobileMenuOpen = true }: NavbarProps) {
             alt="menu icon"
           />
         </button>
-        {/* Right side - User info */}
-        <div className="flex items-center gap-3  ms-auto">
+
+        {/* User info */}
+        <div className="ms-auto flex items-start gap-3">
           {!isLoading && user && (
             <>
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-gray-800">{userName}</p>
-                <p className="text-xs text-gray-500">{userJobTitle}</p>
+                <p className="text-sm font-bold  text-slate-900">{userName}</p>
+                <p className="text-[10px] font-bold text-primary uppercase">
+                  {userJobTitle}
+                </p>
               </div>
-              <Avatar name={userName} />
+              <Avatar name={userName} size="md" />
             </>
           )}
           {isLoading && (
