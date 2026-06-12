@@ -1,7 +1,8 @@
 import { User } from "./user.types";
 
 export type AuthState = {
-    user: User | null;
-    isLoading: boolean;
-    error: string | null;
-}
+  user: User | null;
+  isLoading: boolean;
+  isInitialized: boolean;
+  error: string | null;
+};

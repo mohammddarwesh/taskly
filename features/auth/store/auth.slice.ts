@@ -6,12 +6,12 @@ import { fetchUserThunk, loginThunk, logoutThunk } from "./auth.thunks";
 const initialState: AuthState = {
     user: null,
     isLoading: false,
+    isInitialized: false,
     error: null,
 };
-
 const authSlice = createSlice({
-    name: 'auth', 
-    initialState, 
+    name: 'auth',
+    initialState,
     reducers: {
         clearError: (state) => {
             state.error = null
@@ -24,15 +24,18 @@ const authSlice = createSlice({
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(fetchUserThunk.fulfilled, (state, action: PayloadAction<User>) => {
-                state.isLoading = false;
+            .addCase(fetchUserThunk.fulfilled, (state, action) => {
                 state.user = action.payload;
-            })
-            .addCase(fetchUserThunk.rejected, (state, action) => {
                 state.isLoading = false;
-                state.error = action.payload as string;
-            });
-        
+                state.isInitialized = true;
+            })
+
+            .addCase(fetchUserThunk.rejected, (state) => {
+                state.user = null;
+                state.isLoading = false;
+                state.isInitialized = true;
+            })
+
         // Handle loginThunk
         builder
             .addCase(loginThunk.pending, (state) => {
@@ -47,7 +50,7 @@ const authSlice = createSlice({
                 state.isLoading = false;
                 state.error = action.payload as string;
             });
-        
+
         // Handle logoutThunk
         builder
             .addCase(logoutThunk.pending, (state) => {

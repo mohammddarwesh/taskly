@@ -12,6 +12,7 @@ type JwtPayload = {
 const PROTECTED_PATHS = [
     "/dashboard",
     "/projects",
+    "/project",
     "/epics",
     "/members",
     "/settings",

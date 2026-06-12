@@ -11,6 +11,13 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchUserThunk } from "@/features/auth/store/auth.thunks";
 
+const PUBLIC_PATHS = [
+  "/login",
+  "/sign-up",
+  "/forgot-password",
+  "/reset-password",
+];
+
 const getInitialCollapsedState = (): boolean => {
   if (typeof window === "undefined") return false;
   const saved = localStorage.getItem("sidebar-collapsed");
@@ -24,16 +31,17 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const user = useAppSelector(selectUser);
   const isLoading = useAppSelector(selectAuthLoading);
   const router = useRouter();
-  // const pathname = usePathname();
+  const pathname = usePathname();
+
+  // Skip auth check on public routes
+  const isPublicPath = PUBLIC_PATHS.some((p) => pathname?.startsWith(p));
 
   useEffect(() => {
-    // if (pathname === "/login" || pathname === "/sign-up") return;
+    if (isPublicPath) return;
     if (!isLoading && !user) {
-      dispatch(fetchUserThunk())
-        .unwrap()
-        .catch(() => router.push("/login"));
+      dispatch(fetchUserThunk());
     }
-  }, [user, isLoading, router, dispatch]);
+  }, [user, isLoading, router, dispatch, isPublicPath, pathname]);
 
   useEffect(() => {
     if (typeof window !== "undefined")
@@ -50,7 +58,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (isLoading) {
+  // Show loading only on protected routes
+  if (isLoading && !isPublicPath) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -61,8 +70,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) return null;
+  // On protected routes, wait for user; on public routes, render children directly
+  if (!isPublicPath && !user) return null;
 
+  // Public routes just render children (no sidebar/navbar)
+  if (isPublicPath) return <>{children}</>;
+
+  // Protected route layout
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar

@@ -23,13 +23,13 @@ export function BottomActions({
     setIsLoggingOut(true);
     try {
       await dispatch(logoutThunk()).unwrap();
-      sessionStorage.clear();
-      router.push("/login");
+      sessionStorage.removeItem("authToken");
+      sessionStorage.removeItem("refreshToken");
+      router.replace("/login");
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
       setIsLoggingOut(false);
-      router.refresh();
     }
   };
 
