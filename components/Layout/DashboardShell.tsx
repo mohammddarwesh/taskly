@@ -24,10 +24,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const user = useAppSelector(selectUser);
   const isLoading = useAppSelector(selectAuthLoading);
   const router = useRouter();
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname === "/login" || pathname === "/sign-up") return;
+    // if (pathname === "/login" || pathname === "/sign-up") return;
     if (!isLoading && !user) {
       dispatch(fetchUserThunk())
         .unwrap()

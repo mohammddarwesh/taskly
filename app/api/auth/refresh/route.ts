@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       expires_at: number;
     }>(`${backendURL}/auth/v1/token?grant_type=refresh_token`, {
       method: 'POST',
-      headers: { apikey: api_key! },
+      headers: { apikey: api_key },
       body: { refresh_token: refreshToken },
     });
 

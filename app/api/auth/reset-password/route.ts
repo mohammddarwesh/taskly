@@ -21,7 +21,7 @@ export async function PUT(request: Request) {
         await apiClient(`${backendURL}/"auth/v1/user"`, {
             method: "PUT",
             headers: {
-                apikey: api_key!,
+                apikey: api_key,
                 Authorization: `Bearer ${access_token}`
             },
             body: { password }

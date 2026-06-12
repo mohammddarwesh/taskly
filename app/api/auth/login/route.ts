@@ -15,7 +15,7 @@ export async function POST(request: Request) {
             {
                 method: "POST",
                 headers: {
-                    apikey: api_key!,
+                    apikey: api_key,
                 },
                 body,
             },

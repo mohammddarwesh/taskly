@@ -13,7 +13,7 @@ export async function POST(request: Request) {
         const data = await apiClient<SupaBaseAuthResponse>(`${backendURL}/auth/v1/signup`, {
             method: "POST",
             headers: {
-                apikey: api_key!,
+                apikey: api_key,
             },
             body,
         });

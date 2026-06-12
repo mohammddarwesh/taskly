@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
             await apiClient(`${backendURL}/auth/v1/logout`, {
                 method: "POST",
                 headers: {
-                    apikey: api_key!,
+                    apikey: api_key,
                     Authorization: `Bearer ${accessToken}`
                 }
             })
