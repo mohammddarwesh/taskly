@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Navbar } from "./Navbar";
 import {
@@ -24,8 +24,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const user = useAppSelector(selectUser);
   const isLoading = useAppSelector(selectAuthLoading);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname === "/login" || pathname === "/sign-up") return;
     if (!isLoading && !user) {
       dispatch(fetchUserThunk())
         .unwrap()

@@ -39,13 +39,22 @@ const authSlice = createSlice({
             state.isLoading = false
             state.error = action.payload as string
         })
-
-        builder.addCase(logoutThunk.fulfilled, (state) => {
-            state.user = null
-            state.isLoading = false
-            state.error = null
-        })
+        builder
+            .addCase(logoutThunk.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(logoutThunk.fulfilled, (state) => {
+                state.isLoading = false;
+                state.user = null;      // ✅ مسح user بعد logout
+                state.error = null;
+            })
+            .addCase(logoutThunk.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload as string;
+            });
     }
+
 })
 
 export const { clearError } = authSlice.actions

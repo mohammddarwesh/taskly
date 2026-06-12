@@ -14,7 +14,6 @@ interface NavbarProps {
 export function Navbar({ onMenuClick, isMobileMenuOpen }: NavbarProps) {
   const user = useAppSelector(selectUser);
   const isLoading = useAppSelector(selectAuthLoading);
-  console.log("userData NAV", user);
   const userName = user?.user_metadata?.name || "User";
   const userJobTitle = user?.user_metadata?.job_title || "Member";
 

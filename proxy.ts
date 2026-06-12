@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from "next/server";
 import { accessTokenStr, refreshTokenStr } from './constants';
 

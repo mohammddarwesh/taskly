@@ -41,9 +41,12 @@ export const logoutThunk = createAsyncThunk<void, void, { rejectValue: string }>
     'auth/login',
     async (_, { rejectWithValue }) => {
         try {
-            await apiClient<{ success: boolean; user: User }>('/api/auth/logout', {
+            const response = await apiClient<{ success: boolean; user: User }>('/api/auth/logout', {
                 method: "POST",
             })
+            if (!response.success) {
+                throw new Error('Logout failed');
+            }
         } catch (error: unknown) {
             if (isApiError(error)) return rejectWithValue(error.msg);
             return rejectWithValue('Failed to get user data');

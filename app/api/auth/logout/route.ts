@@ -1,9 +1,25 @@
-// app/api/auth/logout/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { clearTokenCookies } from '@/libs/cookies';
+import { accessTokenStr, api_key, backendURL } from '@/constants';
+import { apiClient } from '@/libs/api-client';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+    const accessToken = request.cookies.get(accessTokenStr)?.value
+
     const response = NextResponse.json({ success: true });
     clearTokenCookies(response);
-    return response;
+    try {
+        if (accessToken) {
+            await apiClient(`${backendURL}/auth/v1/logout`, {
+                method: "POST",
+                headers: {
+                    apikey: api_key!,
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+        }
+        return response;
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
 }

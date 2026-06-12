@@ -22,7 +22,18 @@ export async function apiClient<T>(endpoint: string, options: ApiOptions = {}): 
             body: options.body ? JSON.stringify(options.body) : undefined
         },
     )
+    if (res.status === 204) {
+        return {} as T;
+    }
+    const contentLength = res.headers.get("content-length");
+    if (contentLength === "0") {
+        return {} as T;
+    }
+
+
     const data = await res.json()
+
+
     console.log("api client data RES", data)
 
     if (!res.ok) {

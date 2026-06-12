@@ -10,12 +10,10 @@ import Head from "@/components/ui/Head";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { apiClient } from "@/libs/api-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { ApiError } from "@/types/apiError.types";
 import {
-  clearRedirect,
   getAuthLink,
   getRedirectUrl,
 } from "@/libs/redirect-utils";
