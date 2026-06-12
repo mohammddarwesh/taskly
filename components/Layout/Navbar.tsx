@@ -18,7 +18,7 @@ export function Navbar({ onMenuClick, isMobileMenuOpen }: NavbarProps) {
   const userJobTitle = user?.user_metadata?.job_title || "Member";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+    <nav className=" bg-white border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between  px-4 py-3 lg:px-6">
         {/* Menu button (mobile/tablet only)  */}
         <button

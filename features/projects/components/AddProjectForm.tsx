@@ -1,48 +1,94 @@
-'use client';
+"use client";
 
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
-import { useAddProject } from '../hooks/useAddProject';
-import { cn } from '@/libs/utils';
+import Input from "@/components/ui/Input";
+import Textarea from "@/components/ui/Textarea";
+import Head from "@/components/ui/Head";
+import { FormError } from "@/components/ui/FormError";
+import { CharCounter } from "@/components/ui/CharCounter";
+import { useAddProject } from "../hooks/useAddProject";
+import { ProTipFooter } from "./ProTipFooter";
+import { FormActions } from "./FormActions";
+import Image from "next/image";
+import { cn } from "@/libs/utils";
 
 export function AddProjectForm() {
-    const { form, isSubmitting, onSubmit } = useAddProject();
-    const { register, formState: { errors } } = form;
+  const { form, isSubmitting, onSubmit } = useAddProject();
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = form;
 
-    return (
-        <form onSubmit={onSubmit} className="mx-auto max-w-xl space-y-6">
-            <Input
-                label="Project Title"
-                id="name"
-                {...register('name')}
-                error={errors.name?.message}
-                placeholder="Enter project title"
-                // required
-            />
+  const descriptionValue = watch("description", "") || "";
 
-            <div className="flex flex-col gap-2">
-                <label htmlFor="description" className="text-sm font-medium text-text-primary">
-                    Description <span className="text-text-secondary">(optional)</span>
-                </label>
-                <textarea
-                    id="description"
-                    {...register('description')}
-                    rows={4}
-                    maxLength={500}
-                    placeholder="Briefly describe the project"
-                    className={cn(
-                        'w-full rounded-md border border-border bg-background px-3 py-2 text-sm shadow-sm',
-                        'focus:outline-none focus:ring-2 focus:ring-ring',
-                    )}
-                />
-                {errors.description && (
-                    <p className="text-sm text-text-error">{errors.description.message}</p>
-                )}
+  return (
+    <div className="w-full max-w-2xl bg-surface-card rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+      {/* Header */}
+      <div className="card">
+        <div className="flex items-center gap-4 px-8 pt-8 pb-10 border-b border-surface-low">
+          <div
+            className={cn(
+              " flex items-center justify-center w-11.5 h-11 rounded bg-icon/10 shrink-0",
+            )}
+          >
+            <Image src="/icons/checkPlus.svg" alt="" width={22} height={20} />
+          </div>
+          <Head
+            head="Initialize New Project"
+            sub="Define the scope and foundational details of your project."
+            className="p-0"
+            headClassName="text-2xl leading-8 font-semibold text-text-primary tracking-normal"
+            subClassName="text-sm leading-5 text-text-secondary mt-0"
+          />
+        </div>
+        {/* Form */}
+        <form onSubmit={onSubmit} className="px-8 pt-8 space-y-8">
+          {/* Project Name */}
+          <Input
+            id="name"
+            label="Project Title *"
+            placeholder="Enter project title"
+            {...register("name")}
+            labelClassName="font-bold text-[11px] leading-4 tracking-[0.55px] uppercase !text-text-secondary"
+          />
+          <FormError message={errors.name?.message} showDot />
+          {/* Description */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label
+                htmlFor="description"
+                className="font-bold text-[11px] leading-4 tracking-[0.55px] uppercase text-text-secondary"
+              >
+                Description
+              </label>
             </div>
-
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-                {isSubmitting ? 'Creating...' : 'Create'}
-            </Button>
+            <Textarea
+              id="description"
+              label=""
+              placeholder="Provide a high-level overview of the project's architectural objectives and key milestones..."
+              maxLength={500}
+              {...register("description")}
+              // no error prop passed
+            />
+            <CharCounter
+              current={descriptionValue.length}
+              max={500}
+              className="block text-right"
+            />
+            <FormError message={errors.description?.message} />
+          </div>
+          {/* Actions */}
+          <FormActions
+            submitLabel="Create Project"
+            isSubmitting={isSubmitting}
+          />
         </form>
-    );
+      </div>
+
+      {/* Pro Tip */}
+      <div className="">
+        <ProTipFooter text="Pro Tip: You can invite project members and assign epics immediately after the initial creation process." />
+      </div>
+    </div>
+  );
 }
