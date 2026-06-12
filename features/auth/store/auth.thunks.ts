@@ -38,7 +38,7 @@ export const loginThunk = createAsyncThunk<User, { email: string; password: stri
 
 
 export const logoutThunk = createAsyncThunk<void, void, { rejectValue: string }>(
-    'auth/login',
+    'auth/logout',
     async (_, { rejectWithValue }) => {
         try {
             const response = await apiClient<{ success: boolean; user: User }>('/api/auth/logout', {
