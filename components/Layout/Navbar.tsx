@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@/hooks/useUser";
 import { Avatar } from "@/components/ui/Avatar";
 import Image from "next/image";
 import { useAppSelector } from "@/store/hooks";

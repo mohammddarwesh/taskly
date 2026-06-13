@@ -70,11 +70,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // On protected routes, wait for user; on public routes, render children directly
-  if (!isPublicPath && !user) return null;
-
-  // Public routes just render children (no sidebar/navbar)
-  if (isPublicPath) return <>{children}</>;
 
   // Protected route layout
   return (

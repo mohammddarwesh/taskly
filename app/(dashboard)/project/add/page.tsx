@@ -8,10 +8,8 @@ export default function AddProjectPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-8">
-        {/* Breadcrumb + Page Title using Head */}
-        {/* <div className="flex justify-between flex-col items-start mb-8"> */}
         <Breadcrumbs />
-        <div className="flex justify-between w-full mb-8">
+        <div className="flex justify-between items-center  w-full  mb-8 pt-8">
           <Head
             head="Add New Project"
             className="pt-4 pb-0"
@@ -28,9 +26,7 @@ export default function AddProjectPage() {
             Invite Member{" "}
           </Button>
         </div>
-        {/* </div> */}
 
-        {/* Form Card */}
         <div className="flex justify-center pb-16">
           <AddProjectForm />
         </div>

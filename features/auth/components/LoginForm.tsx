@@ -63,7 +63,7 @@ export function LoginForm() {
         }),
       ).unwrap();
       if (resultAction) {
-        router.push("/projects");
+        router.push("/project");
       }
     } catch (error) {
       console.error("#loginError", error);

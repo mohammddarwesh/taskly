@@ -5,7 +5,7 @@ import { NavItem } from "./NavItem";
 import { NavItemType } from "./types";
 
 const navItems: NavItemType[] = [
-  { href: "/projects", iconRef: "projects.svg", label: "Projects" },
+  { href: "/project", iconRef: "projects.svg", label: "Projects" },
   { href: "/epics", iconRef: "epics.svg", label: "Epics" },
   { href: "/tasks", iconRef: "tasks.svg", label: "Tasks" },
   { href: "/members", iconRef: "members.svg", label: "Members" },
