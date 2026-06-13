@@ -1,5 +1,6 @@
 import { apiClient } from '@/libs/api-client';
 import { AddProjectFormValues } from '../schemas/add-project.schema';
+import { Project } from '../types/project.types';
 
 export async function createProject(data: AddProjectFormValues) {
     const response = await apiClient('/api/projects', {
@@ -10,4 +11,8 @@ export async function createProject(data: AddProjectFormValues) {
 
 
     return response
+}
+
+export async function getProjects(): Promise<Project[]> {
+    return apiClient<Project[]>('/api/projects');
 }
