@@ -3,7 +3,10 @@
 import { Avatar } from "@/components/ui/Avatar";
 import Image from "next/image";
 import { useAppSelector } from "@/store/hooks";
-import { selectAuthLoading, selectUser } from "@/features/auth/store/auth.selectors";
+import {
+  selectAuthLoading,
+  selectUser,
+} from "@/features/auth/store/auth.selectors";
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -19,7 +22,6 @@ export function Navbar({ onMenuClick, isMobileMenuOpen }: NavbarProps) {
   return (
     <nav className=" bg-white border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between  px-4 py-3 lg:px-6">
-        {/* Menu button (mobile/tablet only)  */}
         <button
           onClick={onMenuClick}
           className="p-2 rounded-lg hover:bg-gray-100 lg:hidden"
@@ -33,7 +35,6 @@ export function Navbar({ onMenuClick, isMobileMenuOpen }: NavbarProps) {
           />
         </button>
 
-        {/* User info */}
         <div className="ms-auto flex items-start gap-3">
           {!isLoading && user && (
             <>
