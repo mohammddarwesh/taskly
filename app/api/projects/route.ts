@@ -33,7 +33,41 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(response, { status: 201 });
     } catch (error) {
         console.error('BFF create project error:', error);
-          if (isApiError(error))  {
+        if (isApiError(error)) {
+            return NextResponse.json(
+                { error: error.msg },
+                { status: (error as { code: number }).code }
+            );
+        }
+
+        return NextResponse.json(
+            { error: 'Internal server error' },
+            { status: 500 }
+        );
+    }
+}
+
+
+
+export async function GET(request: NextRequest) {
+    try {
+        const accessToken = request.cookies.get(accessTokenStr)?.value;
+        if (!accessToken) {
+            return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+        }
+
+        const projects = await apiClient(`${backendURL}/rest/v1/rpc/get_projects`, {
+            method: 'GET',
+            headers: {
+                apikey: api_key!,
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        return NextResponse.json(projects);
+    } catch (error) {
+        console.error('BFF create project error:', error);
+        if (isApiError(error)) {
             return NextResponse.json(
                 { error: error.msg },
                 { status: (error as { code: number }).code }
