@@ -10,13 +10,7 @@ import {
 } from "@/features/auth/store/auth.selectors";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchUserThunk } from "@/features/auth/store/auth.thunks";
-
-const PUBLIC_PATHS = [
-  "/login",
-  "/sign-up",
-  "/forgot-password",
-  "/reset-password",
-];
+import { cn } from "@/libs/utils";
 
 const getInitialCollapsedState = (): boolean => {
   if (typeof window === "undefined") return false;
@@ -31,17 +25,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const user = useAppSelector(selectUser);
   const isLoading = useAppSelector(selectAuthLoading);
   const router = useRouter();
-  const pathname = usePathname();
-
-  // Skip auth check on public routes
-  const isPublicPath = PUBLIC_PATHS.some((p) => pathname?.startsWith(p));
+  // const pathname = usePathname();
 
   useEffect(() => {
-    if (isPublicPath) return;
+    // if (isPublicPath) return;
     if (!isLoading && !user) {
       dispatch(fetchUserThunk());
     }
-  }, [user, isLoading, router, dispatch, isPublicPath, pathname]);
+  }, [user, isLoading, router, dispatch]);
 
   useEffect(() => {
     if (typeof window !== "undefined")
@@ -58,8 +49,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Show loading only on protected routes
-  if (isLoading && !isPublicPath) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -70,8 +60,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-
-  // Protected route layout
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar
@@ -85,15 +73,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         onMobileClose={() => setIsMobileMenuOpen(false)}
       />
       <main
-        className="transition-all duration-300 pt-16"
-        style={{
-          marginLeft:
-            typeof window !== "undefined" && window.innerWidth >= 1024
-              ? isCollapsed
-                ? "5rem"
-                : "16rem"
-              : 0,
-        }}
+        className={cn(
+          "transition-all duration-300 pt-16",
+          isCollapsed ? "lg:ml-20" : "lg:ml-64",
+        )}
       >
         <div className="p-4 md:p-6">{children}</div>
       </main>
