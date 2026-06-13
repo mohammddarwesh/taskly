@@ -25,7 +25,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const user = useAppSelector(selectUser);
   const isLoading = useAppSelector(selectAuthLoading);
   const router = useRouter();
-  // const pathname = usePathname();
 
   useEffect(() => {
     // if (isPublicPath) return;
