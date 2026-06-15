@@ -28,7 +28,7 @@ interface UsePaginationReturn<T> {
 export function useGetPagination<T>({
   fetcher,
   pageSize = 10,
-//   onAuthError,
+  //   onAuthError,
 }: usePaginationOptions<T>): UsePaginationReturn<T> {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +41,8 @@ export function useGetPagination<T>({
   // Fetch for page changes (triggered by user events)
   const fetchPage = useCallback(
     async (page: number) => {
+      setCurrentPage(page);
+
       setIsLoading(true);
       setError(null);
       try {
@@ -50,7 +52,7 @@ export function useGetPagination<T>({
         setTotalCount(total);
       } catch (err) {
         if (isApiError(err)) {
-          setError(err?.msg || "Failed tp");
+          setError(err?.msg || "Failed to get projects");
         }
       } finally {
         setIsLoading(false);
@@ -69,7 +71,6 @@ export function useGetPagination<T>({
   const setPage = useCallback(
     (page: number) => {
       if (page >= 1 && page <= totalPages) {
-        setCurrentPage(page);
         fetchPage(page);
       }
     },
@@ -79,7 +80,6 @@ export function useGetPagination<T>({
   const nextPage = useCallback(() => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
-      setCurrentPage(nextPage);
       fetchPage(nextPage);
     }
   }, [currentPage, totalPages, fetchPage]);
@@ -87,7 +87,6 @@ export function useGetPagination<T>({
   const prevPage = useCallback(() => {
     if (currentPage > 1) {
       const PrevPage = currentPage - 1;
-      setCurrentPage(PrevPage);
       fetchPage(PrevPage);
     }
   }, [currentPage, fetchPage]);
