@@ -16,3 +16,14 @@ export async function createProject(data: AddProjectFormValues) {
 export async function getProjects(): Promise<Project[]> {
     return apiClient<Project[]>('/api/projects');
 }
+
+
+interface PaginatedProjects {
+    data: Project[];
+    total: number;
+}
+
+export async function getProjectsPaginated(limit: number, offset: number): Promise<PaginatedProjects> {
+    return apiClient(`/api/projects?limit=${limit}&offset=${offset}`)
+
+}
