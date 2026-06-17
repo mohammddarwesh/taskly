@@ -11,6 +11,7 @@ interface usePaginationOptions<T> {
   fetcher: (limit: number, offset: number) => Promise<PaginatedResponse<T>>;
   pageSize?: number;
   onAuthError?: () => void;
+  mode?: "replace" | "append";
 }
 
 interface UsePaginationReturn<T> {
@@ -25,9 +26,10 @@ interface UsePaginationReturn<T> {
   prevPage: () => void;
 }
 
-export function useGetPagination<T>({
+export function usePagination<T>({
   fetcher,
   pageSize = 10,
+  mode = "replace",
   //   onAuthError,
 }: usePaginationOptions<T>): UsePaginationReturn<T> {
   const [data, setData] = useState<T[]>([]);
@@ -48,8 +50,12 @@ export function useGetPagination<T>({
       try {
         const offset = (page - 1) * pageSize;
         const { data: newData, total } = await fetcher(pageSize, offset);
-        setData(newData);
         setTotalCount(total);
+        if (mode === "append") {
+          setData((prev) => [...prev, ...newData]);
+        } else {
+          setData(newData);
+        }
       } catch (err) {
         if (isApiError(err)) {
           setError(err?.msg || "Failed to get projects");
@@ -58,7 +64,7 @@ export function useGetPagination<T>({
         setIsLoading(false);
       }
     },
-    [fetcher, pageSize],
+    [fetcher, mode, pageSize],
   );
   useEffect(() => {
     const initialFetch = async () => {
