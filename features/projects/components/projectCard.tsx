@@ -8,12 +8,12 @@ interface Props {
 export function ProjectCard({ project }: Props) {
   return (
     <div
-      className="card flex flex-col justify-between min-h-55 p-6 gap-7 
+      className="card flex flex-col justify-between min-h-55 p-6! gap-7 
                     bg-white rounded-lg border border-slate-300/10 
                     shadow-sm hover:shadow-md transition-shadow"
     >
       <div className="flex flex-col gap-2">
-        <h3 className="text-[18px] font-medium leading-7 text-slate-900">
+        <h3 className="text-lg font-medium leading-7 text-slate-900">
           {project.name}
         </h3>
         <p className="text-sm leading-5.75 text-slate-300 line-clamp-3">
