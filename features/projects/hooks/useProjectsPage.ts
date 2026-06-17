@@ -6,7 +6,7 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 export function useProjectsPage() {
   const isMobile = useIsMobile();
   const mode = isMobile ? "append" : "replace";
-  const pageSize = 10;
+  const pageSize = 6;
 
   const {
     data: projects,
