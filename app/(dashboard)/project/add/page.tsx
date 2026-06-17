@@ -6,10 +6,10 @@ import Image from "next/image";
 
 export default function AddProjectPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className=" bg-background">
       <div className="max-w-7xl mx-auto px-8">
         <Breadcrumbs />
-        <div className="flex justify-between items-center  w-full  mb-8 pt-8">
+        <div className="flex flex-col md:flex-row gap-8 justify-between items-center  w-full  mb-8 pt-8">
           <Head
             head="Add New Project"
             className="pt-4 pb-0"
