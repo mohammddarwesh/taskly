@@ -1,5 +1,6 @@
 import { formatDate } from "@/libs/utils";
 import { Project } from "../types/project.types";
+import Link from "next/link";
 
 interface Props {
   project: Project;
@@ -7,7 +8,8 @@ interface Props {
 
 export function ProjectCard({ project }: Props) {
   return (
-    <div
+    <Link
+      href={`/project/${project.id}/epics`}
       className="card flex flex-col justify-between min-h-55 p-6! gap-7 
                     bg-white rounded-lg border border-slate-300/10 
                     shadow-sm hover:shadow-md transition-shadow"
@@ -29,6 +31,6 @@ export function ProjectCard({ project }: Props) {
           {formatDate(project.created_at)}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }
