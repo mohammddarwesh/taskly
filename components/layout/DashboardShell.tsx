@@ -24,21 +24,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const isLoading = useAppSelector(selectAuthLoading);
-  const router = useRouter();
 
-  // Fetch user
   useEffect(() => {
     if (!isLoading && !user) {
       dispatch(fetchUserThunk());
     }
   }, [user, isLoading, dispatch]);
 
-  // Redirect unauthenticated users
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace("/login");
-    }
-  }, [user, isLoading, router]);
 
   // Persist collapse state
   useEffect(() => {
