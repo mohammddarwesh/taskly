@@ -27,3 +27,15 @@ export async function getProjectsPaginated(limit: number, offset: number): Promi
     return apiClient(`/api/projects?limit=${limit}&offset=${offset}`)
 
 }
+
+export async function getProjectById(id: string): Promise<Project> {
+  return apiClient<Project>(`/api/projects/${id}`);
+}
+
+export async function updateProject(id: string, data: { name: string; description?: string }) {
+  return apiClient(`/api/projects/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: data,
+  });
+}
