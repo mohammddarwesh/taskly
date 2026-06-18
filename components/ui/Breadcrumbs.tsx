@@ -10,6 +10,8 @@ const ROUTE_MAP: Record<string, string> = {
   add: "Add New Project",
   edit: "Edit Project",
   members: "Members",
+  epics: "Epics",
+  new: "New Epic",
 };
 
 type BreadcrumbItem = {
