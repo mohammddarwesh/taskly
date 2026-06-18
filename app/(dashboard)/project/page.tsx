@@ -39,7 +39,7 @@ export default function ProjectsPage() {
 
       {isEmpty && <ProjectsEmptyState />}
 
-      {projects.length > 0 && (
+      {projects.length > 0 && !error && (
         <>
           <ProjectListHeader />
           <ProjectListGrid projects={projects} />
