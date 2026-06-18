@@ -9,7 +9,7 @@ export async function GET(
     params,
   }: {
     params: Promise<{
-      id: string;
+      projectId: string;
     }>;
   },
 ) {
@@ -22,9 +22,9 @@ export async function GET(
       );
     }
 
-    const { id } = await params;
+    const { projectId } = await params;
     const url = new URL(`${backendURL}/rest/v1/projects`);
-    url.searchParams.set("id", `eq.${id}`);
+    url.searchParams.set("id", `eq.${projectId}`);
     url.searchParams.set("select", "*");
 
     const res = await fetch(url, {
@@ -75,7 +75,7 @@ export async function PATCH(
     params,
   }: {
     params: Promise<{
-      id: string;
+      projectId: string;
     }>;
   },
 ) {
@@ -88,7 +88,7 @@ export async function PATCH(
       );
     }
 
-    const { id } = await params;
+    const { projectId } = await params;
     const body = await request.json();
     const { name, description = "" } = body;
 
@@ -104,7 +104,7 @@ export async function PATCH(
     }
 
     const url = new URL(`${backendURL}/rest/v1/projects`);
-    url.searchParams.set("id", `eq.${id}`);
+    url.searchParams.set("id", `eq.${projectId}`);
 
     const res = await fetch(url, {
       method: "PATCH",

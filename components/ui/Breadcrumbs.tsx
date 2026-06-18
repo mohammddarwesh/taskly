@@ -9,6 +9,7 @@ const ROUTE_MAP: Record<string, string> = {
   projects: "Projects",
   add: "Add New Project",
   edit: "Edit Project",
+  members: "Members",
 };
 
 type BreadcrumbItem = {
