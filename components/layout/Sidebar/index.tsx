@@ -10,27 +10,39 @@ export function Sidebar({
   onToggleCollapse,
   isMobileOpen,
   onMobileClose,
+  navItems,
 }: SidebarProps) {
   const sidebarContent = (
     <>
       <SidebarLogo isCollapsed={isCollapsed} />
-      <NavItemsList isCollapsed={isCollapsed} onMobileClose={onMobileClose} />
-      <BottomActions isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} />
+      <NavItemsList
+        items={navItems}
+        isCollapsed={isCollapsed}
+        onMobileClose={onMobileClose}
+      />
+      <BottomActions
+        isCollapsed={isCollapsed}
+        onToggleCollapse={onToggleCollapse}
+      />
     </>
   );
 
   return (
     <>
+      {/* Desktop sidebar */}
       <aside
         className={`
-          hidden lg:flex lg:flex-col fixed p-4 left-0 top-0 h-full bg-[#F1F3FF] shadow-sm
-          transition-all duration-300 z-50
+          hidden lg:flex lg:flex-col p-4 left-0 top-0 h-screen overflow-auto bg-[#F1F3FF] shadow-sm
+          transition-all duration-300 z-50 shrink-0
           ${isCollapsed ? "w-20 p-0" : "w-64"}
         `}
       >
-        <div className="flex flex-col justify-between h-full">{sidebarContent}</div>
+        <div className="flex flex-col justify-between h-full">
+          {sidebarContent}
+        </div>
       </aside>
 
+      {/* Mobile overlay + sidebar */}
       {isMobileOpen && (
         <>
           <div
@@ -45,7 +57,9 @@ export function Sidebar({
             `}
             style={{ padding: "16px" }}
           >
-            <div className="flex flex-col justify-between h-full">{sidebarContent}</div>
+            <div className="flex flex-col justify-between h-full">
+              {sidebarContent}
+            </div>
           </aside>
         </>
       )}
