@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { cn } from '@/libs/utils';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Fragment } from 'react';
-
+import { cn } from "@/libs/utils";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 
 const ROUTE_MAP: Record<string, string> = {
-  projects: 'Projects',
-  add: 'Add New Project',
+  projects: "Projects",
+  add: "Add New Project",
+  edit: "Edit Project",
 };
 
 type BreadcrumbItem = {
@@ -19,22 +19,17 @@ type BreadcrumbItem = {
 export function Breadcrumbs() {
   const pathname = usePathname();
 
-  const segments = pathname.split('/').filter(Boolean);
+  const segments = pathname.split("/").filter(Boolean);
 
   if (segments.length === 0) return null;
 
   const items: BreadcrumbItem[] = segments.map((segment, index) => ({
-    label:
-      ROUTE_MAP[segment] ??
-      segment.replace(/-/g, ' ').toUpperCase(),
-    href: `/${segments.slice(0, index + 1).join('/')}`,
+    label: ROUTE_MAP[segment] ?? segment.replace(/-/g, " ").toUpperCase(),
+    href: `/${segments.slice(0, index + 1).join("/")}`,
   }));
 
   return (
-    <nav
-      aria-label="Breadcrumb"
-      className="flex items-center gap-2"
-    >
+    <nav aria-label="Breadcrumb" className="flex items-center gap-2">
       {items.map((item, index) => {
         const isActive = index === items.length - 1;
 
@@ -62,8 +57,8 @@ export function Breadcrumbs() {
             {isActive ? (
               <span
                 className={cn(
-                  'text-xs font-bold uppercase leading-4 tracking-[1.2px]',
-                  'text-primary'
+                  "text-xs font-bold uppercase leading-4 tracking-[1.2px]",
+                  "text-primary",
                 )}
                 aria-current="page"
               >
@@ -73,8 +68,8 @@ export function Breadcrumbs() {
               <Link
                 href={item.href}
                 className={cn(
-                  'text-xs font-bold uppercase leading-4 tracking-[1.2px]',
-                  'text-text-secondary/60 transition-colors hover:text-text-secondary'
+                  "text-xs font-bold uppercase leading-4 tracking-[1.2px]",
+                  "text-text-secondary/60 transition-colors hover:text-text-secondary",
                 )}
               >
                 {item.label}
