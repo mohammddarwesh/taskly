@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/libs/utils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -24,14 +25,14 @@ export function NavItem({
     <Link
       href={href}
       onClick={onMobileClose}
-      className={`
-        flex items-center gap-3 px-3 py-2.5 rounded transition-all duration-200
-        ${isActive
-          ? "bg-white text-[#003D9B] shadow-sm"
-          : "text-[#041B3C] hover:bg-white/50"
-        }
-        ${isCollapsed ? "justify-center w-12 h-12" : ""}
-      `}
+      className={cn(
+        `
+        flex items-center gap-3 px-3 py-2.5 rounded transition-all duration-200`,
+        isActive
+          ? "bg-white text-primary shadow-sm"
+          : "text-[#041B3C] hover:bg-white/50",
+        isCollapsed ? "justify-center w-12 h-12" : "",
+      )}
       title={isCollapsed ? label : undefined}
     >
       <Image
@@ -42,7 +43,12 @@ export function NavItem({
         alt={`${label} icon`}
       />
       {!isCollapsed && (
-        <span className={`text-sm font-medium ${isActive ? "text-[#003D9B]" : "text-[#041B3C]"}`}>
+        <span
+          className={cn(
+            `text-sm font-medium`,
+            isActive ? "text-primary" : "text-slate-900",
+          )}
+        >
           {label}
         </span>
       )}

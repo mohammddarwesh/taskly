@@ -9,4 +9,5 @@ export interface SidebarProps {
   onToggleCollapse: () => void;
   isMobileOpen: boolean;
   onMobileClose: () => void;
+  navItems: NavItemType[];
 }
