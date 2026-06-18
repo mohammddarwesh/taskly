@@ -20,8 +20,8 @@ export function Navbar({ onMenuClick, isMobileMenuOpen }: NavbarProps) {
   const userJobTitle = user?.user_metadata?.job_title || "Member";
 
   return (
-    <nav className=" bg-white border-b border-gray-200 shadow-sm">
-      <div className="flex items-center justify-between  px-4 py-3 lg:px-6">
+    <nav className=" bg-white border-b border-gray-200 shadow-sm h-16">
+      <div className="flex items-center justify-between px-4 py-3 lg:px-6 h-full">
         <button
           onClick={onMenuClick}
           className="p-2 rounded-lg hover:bg-gray-100 lg:hidden"
@@ -39,7 +39,7 @@ export function Navbar({ onMenuClick, isMobileMenuOpen }: NavbarProps) {
           {!isLoading && user && (
             <>
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold  text-slate-900">{userName}</p>
+                <p className="text-sm font-bold text-slate-900">{userName}</p>
                 <p className="text-[10px] font-bold text-primary uppercase">
                   {userJobTitle}
                 </p>

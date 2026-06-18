@@ -27,7 +27,7 @@ export default function ProjectsPage() {
   } = useProjectsPage();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 h-full">
       {isInitialLoading && <ProjectsLoadingState count={6} />}
 
       {error && !isLoading && (
@@ -47,7 +47,7 @@ export default function ProjectsPage() {
       )}
       <FloatingPlusBtn href="/project/add" />
       {showPagination && (
-        <div className="hidden md:block">
+        <div className="hidden md:block mt-33">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
