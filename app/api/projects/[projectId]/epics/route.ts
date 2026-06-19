@@ -85,14 +85,21 @@ export async function GET(
 
     const { projectId } = await params;
 
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const offset = parseInt(searchParams.get("offset") || "0", 10);
+
     const url = new URL(`${backendURL}/rest/v1/project_epics`);
     url.searchParams.set("project_id", `eq.${projectId}`);
+    url.searchParams.set("limit", limit.toString());
+    url.searchParams.set("offset", offset.toString());
 
     const res = await fetch(url, {
       headers: {
         apikey: api_key!,
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
+        Prefer: "count=exact",
       },
     });
 
@@ -104,8 +111,16 @@ export async function GET(
       );
     }
 
-    const data = await res.json();
-    return NextResponse.json(data);
+    const epics = await res.json();
+
+    const contentRange = res.headers.get("content-range");
+    let total = 0;
+    if (contentRange) {
+      const parts = contentRange.split("/");
+      total = parts.length === 2 ? parseInt(parts[1], 10) || 0 : 0;
+    }
+
+    return NextResponse.json({ data: epics, total });
   } catch (error) {
     console.error("BFF get epics error:", error);
     if (isApiError(error)) {
