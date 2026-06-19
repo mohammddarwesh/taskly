@@ -40,7 +40,6 @@ export function usePagination<T>({
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
-  // Fetch for page changes (triggered by user events)
   const fetchPage = useCallback(
     async (page: number) => {
       setCurrentPage(page);

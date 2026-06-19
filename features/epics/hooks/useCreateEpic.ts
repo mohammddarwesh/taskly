@@ -1,10 +1,13 @@
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createEpicSchema, CreateEpicFormValues } from '../schemas/create-epic.schema';
-import { createEpic } from '../services/epic.service';
-import { isApiError } from '@/types/apiError.types';
-import { toast } from 'react-toastify';
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createEpicSchema,
+  CreateEpicFormValues,
+} from "../schemas/create-epic.schema";
+import { createEpic } from "../services/epic.service";
+import { isApiError } from "@/types/apiError.types";
+import { toast } from "react-toastify";
 
 export function useCreateEpic(projectId: string) {
   const router = useRouter();
@@ -12,8 +15,8 @@ export function useCreateEpic(projectId: string) {
   const form = useForm<CreateEpicFormValues>({
     resolver: zodResolver(createEpicSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: "",
+      description: "",
       assignee_id: null,
       deadline: null,
     },
@@ -25,7 +28,7 @@ export function useCreateEpic(projectId: string) {
       toast.success('Epic created successfully');
       router.push(`/project/${projectId}/epics`);
     } catch (err) {
-      const message = isApiError(err) ? err.msg : 'Something went wrong';
+      const message = isApiError(err) ? err.msg : "Something went wrong";
       toast.error(`Failed to create epic: ${message}`);
     }
   });
