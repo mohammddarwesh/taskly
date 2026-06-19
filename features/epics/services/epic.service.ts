@@ -17,3 +17,8 @@ export async function createEpic(
     },
   });
 }
+
+
+export async function getProjectEpics(projectId: string): Promise<Epic[]> {
+  return apiClient<Epic[]>(`/api/projects/${projectId}/epics`);
+}
