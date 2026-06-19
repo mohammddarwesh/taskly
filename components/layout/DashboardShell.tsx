@@ -73,12 +73,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         navItems={navItems}
       />
 
-      <div className="flex flex-1 flex-col min-h-screen ">
+      <div className="flex flex-1 flex-col h-screen ">
         <Navbar
           onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           isMobileMenuOpen={isMobileMenuOpen}
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-0 ">{children}</main>
       </div>
     </div>
   );
