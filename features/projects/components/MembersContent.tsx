@@ -3,7 +3,7 @@
 import { useProjectMembers } from '../hooks/useProjectMembers';
 import { MembersTable } from './MembersTable';
 import { MembersLoadingSkeleton } from './MembersLoadingSkeleton';
-import { ErrorScreen } from './ErrorScreen';
+import { ErrorScreen } from '@/components/ErrorScreen';
 
 interface Props {
   projectId: string;
