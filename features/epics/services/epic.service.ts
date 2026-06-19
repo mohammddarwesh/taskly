@@ -2,6 +2,11 @@ import { apiClient } from "@/libs/api-client";
 import { CreateEpicFormValues } from "../schemas/create-epic.schema";
 import { Epic } from "../types/epic.types";
 
+interface PaginatedEpics {
+  data: Epic[];
+  total: number;
+}
+
 export async function createEpic(
   projectId: string,
   data: CreateEpicFormValues,
@@ -18,7 +23,18 @@ export async function createEpic(
   });
 }
 
-
-export async function getProjectEpics(projectId: string): Promise<Epic[]> {
+export async function getProjectEpics(
+  projectId: string,
+): Promise<Epic[]> {
   return apiClient<Epic[]>(`/api/projects/${projectId}/epics`);
+}
+
+export async function getProjectEpicsPaginated(
+  limit: number,
+  offset: number,
+  projectId: string,
+): Promise<PaginatedEpics> {
+  return apiClient<PaginatedEpics>(
+    `/api/projects/${projectId}/epics?limit=${limit}&offset=${offset}`
+  );
 }
