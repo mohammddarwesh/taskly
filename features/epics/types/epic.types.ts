@@ -1,9 +1,18 @@
+export interface User {
+  sub: string;
+  name: string;
+  email: string;
+  department?: string;
+}
+
 export interface Epic {
   id: string;
+  epic_id: string;           
   title: string;
   description?: string;
-  assignee_id?: string | null;
-  deadline?: string | null; 
-  project_id: string;
+  deadline?: string | null;
   created_at: string;
+  created_by: User;
+  assignee?: User | null;
+  project_id: string;
 }
