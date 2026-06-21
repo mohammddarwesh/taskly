@@ -25,7 +25,7 @@ export function FormActions({
     }
   };
   return (
-    <div className="flex justify-between items-center pt-4">
+    <div className="flex flex-col-reverse md:flex-row justify-between items-center pt-4">
       <Button
         variant="ghost"
         type="button"
@@ -37,7 +37,7 @@ export function FormActions({
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="btn btn-primary "
+        className="btn btn-primary w-full "
       >
         {isSubmitting ? "Creating..." : submitLabel}
       </Button>

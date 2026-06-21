@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const createEpicSchema = z.object({
+export const epicFormSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   description: z.string().optional().or(z.literal('')),
   assignee_id: z.string().optional().nullable(),
@@ -20,4 +20,4 @@ export const createEpicSchema = z.object({
     ),
 });
 
-export type CreateEpicFormValues = z.infer<typeof createEpicSchema>;
+export type EpicFormValues = z.infer<typeof epicFormSchema>;
