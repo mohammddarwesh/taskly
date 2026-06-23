@@ -47,9 +47,9 @@ export function EpicsContent({ projectId }: Props) {
 
   const handleUpdateSuccess = () => {
     setPage(currentPage);
-    setTimeout(() => {
-      handleModalClose();
-    }, 300);
+    // setTimeout(() => {
+    //   handleModalClose();
+    // }, 300);
   };
 
   if (isInitialLoading) return <EpicsLoadingSkeleton />;

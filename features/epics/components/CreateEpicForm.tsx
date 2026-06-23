@@ -59,7 +59,6 @@ export default function CreateEpicForm({ projectId }: Props) {
           </div>
         </div>
 
-        {/* Description – row layout */}
         <div className="grid md:grid-cols-[180px_1fr] items-start gap-4">
           <div className="flex flex-col">
             <label
@@ -112,7 +111,6 @@ export default function CreateEpicForm({ projectId }: Props) {
           </div>
         </div>
 
-        {/* Actions */}
         <FormActions
           submitLabel="Create Epic"
           isSubmitting={isSubmitting}
