@@ -45,7 +45,6 @@ export function EpicModalHeader({
         </span>
       </div>
 
-      {/* Editable title */}
       <EditableField
         label="Title"
         isEditing={isEditing}

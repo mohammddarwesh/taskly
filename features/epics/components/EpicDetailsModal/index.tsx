@@ -12,6 +12,7 @@ import { EpicModalHeader } from "./EpicModalHeader";
 import { EpicDescription } from "./EpicDescription";
 import { EpicMeta } from "./EpicMeta";
 import { EpicTasks } from "./EpicTasks";
+import { useEpicTasks } from "../../hooks/useEpicTasks";
 
 interface EpicDetailsModalProps {
   projectId: string;
@@ -30,7 +31,7 @@ export function EpicDetailsModal({
 }: EpicDetailsModalProps) {
   const router = useRouter();
   const { members, isLoading: membersLoading } = useProjectMembers(projectId);
-
+  const { tasks, isLoading, error } = useEpicTasks(projectId, epic.id);
   const {
     form,
     editingField,
@@ -92,51 +93,57 @@ export function EpicDetailsModal({
           onBlurSave={() => saveField("description")}
         />
 
-        <EpicMeta
-          createdByName={epic.created_by?.name}
-          assigneeEditOpen={editingField === "assignee_id"}
-          assigneeDisabled={isFieldLocked("assignee_id")}
-          isSaving={isSaving}
-          assigneeId={assigneeId ?? ""}
-          members={members}
-          membersLoading={membersLoading}
-          onAssigneeStartEdit={() => startEditing("assignee_id")}
-          onAssigneeCancel={() => cancelField("assignee_id")}
-          onAssigneeChange={(value) => {
-            setValue("assignee_id", value, { shouldDirty: true });
-            saveField("assignee_id", value);
-          }}
-          deadlineEditOpen={editingField === "deadline"}
-          deadlineDisabled={isFieldLocked("deadline")}
-          deadlineValue={deadlineValue ?? ""}
-          deadlineError={errors.deadline?.message}
-          onDeadlineStartEdit={() => startEditing("deadline")}
-          onDeadlineCancel={() => cancelField("deadline")}
-          onDeadlineChange={(value) => {
-            setValue("deadline", value, { shouldDirty: true });
-            saveField("deadline", value);
-          }}
+        <div className="flex   gap-6 w-full flex-col md:flex-row justify-evenly">
+          <EpicMeta
+            createdByName={epic.created_by?.name}
+            assigneeEditOpen={editingField === "assignee_id"}
+            assigneeDisabled={isFieldLocked("assignee_id")}
+            isSaving={isSaving}
+            assigneeId={assigneeId ?? ""}
+            members={members}
+            membersLoading={membersLoading}
+            onAssigneeStartEdit={() => startEditing("assignee_id")}
+            onAssigneeCancel={() => cancelField("assignee_id")}
+            onAssigneeChange={(value) => {
+              setValue("assignee_id", value, { shouldDirty: true });
+              saveField("assignee_id", value);
+            }}
+            deadlineEditOpen={editingField === "deadline"}
+            deadlineDisabled={isFieldLocked("deadline")}
+            deadlineValue={deadlineValue ?? ""}
+            deadlineError={errors.deadline?.message}
+            onDeadlineStartEdit={() => startEditing("deadline")}
+            onDeadlineCancel={() => cancelField("deadline")}
+            onDeadlineChange={(value) => {
+              setValue("deadline", value, { shouldDirty: true });
+              saveField("deadline", value);
+            }}
+          />
+          <MetaField
+            label="Created At"
+            className="border-t border-surface-low pt-4"
+          >
+            <div className="flex items-center gap-2.5">
+              <Image
+                src="/icons/calendar.svg"
+                alt=""
+                width={14}
+                height={14}
+                className="opacity-50"
+              />
+              <span className="text-sm font-medium text-text-primary">
+                {formatDate(epic.created_at)}
+              </span>
+            </div>
+          </MetaField>
+        </div>
+
+        <EpicTasks
+          tasks={tasks}
+          isLoading={isLoading}
+          error={error}
+          onAddTask={handleAddTask}
         />
-
-        <MetaField
-          label="Created At"
-          className="border-t border-surface-low pt-4"
-        >
-          <div className="flex items-center gap-2.5">
-            <Image
-              src="/icons/calendar.svg"
-              alt=""
-              width={14}
-              height={14}
-              className="opacity-50"
-            />
-            <span className="text-sm font-medium text-text-primary">
-              {formatDate(epic.created_at)}
-            </span>
-          </div>
-        </MetaField>
-
-        <EpicTasks onAddTask={handleAddTask} />
       </div>
     </Modal>
   );

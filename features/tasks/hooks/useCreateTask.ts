@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 
 import { isApiError } from "@/types/apiError.types";
 import { createTaskSchema, CreateTaskFormValues } from "../schemas/task.schema";
-import { taskService } from "../services/task.service";
 import { TaskStatus } from "../types/task.types";
+import { createTask } from "../services/task.service";
 
 export function useCreateTask(
   projectId: string,
@@ -33,7 +33,7 @@ export function useCreateTask(
     async (values: CreateTaskFormValues) => {
       setIsSubmitting(true);
       try {
-        await taskService.createTask(projectId, values);
+        await createTask(projectId, values);
         form.reset();
         router.push(`/project/${projectId}`);
         toast.success("Task created successfully");
