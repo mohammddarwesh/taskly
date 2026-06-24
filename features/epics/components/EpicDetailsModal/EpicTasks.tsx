@@ -3,7 +3,6 @@
 import Image from "next/image";
 
 interface EpicTasksProps {
-  /** Future: pass in actual tasks array here once tasks are implemented */
   onAddTask?: () => void;
 }
 
