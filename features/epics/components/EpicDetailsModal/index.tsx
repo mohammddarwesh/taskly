@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Modal } from "@/components/ui/Modal";
 import { MetaField } from "@/components/ui/MetaField";
 import { formatDate } from "@/libs/utils";
@@ -27,6 +28,7 @@ export function EpicDetailsModal({
   onClose,
   onUpdate,
 }: EpicDetailsModalProps) {
+  const router = useRouter();
   const { members, isLoading: membersLoading } = useProjectMembers(projectId);
 
   const {
@@ -53,6 +55,10 @@ export function EpicDetailsModal({
 
   const titleField = register("title");
   const descriptionField = register("description");
+
+  const handleAddTask = () => {
+    router.push(`/project/${projectId}/tasks/new?epicId=${epic.id}`);
+  };
 
   return (
     <Modal
@@ -112,7 +118,10 @@ export function EpicDetailsModal({
           }}
         />
 
-        <MetaField label="Created At" className="border-t border-surface-low pt-4">
+        <MetaField
+          label="Created At"
+          className="border-t border-surface-low pt-4"
+        >
           <div className="flex items-center gap-2.5">
             <Image
               src="/icons/calendar.svg"
@@ -127,7 +136,7 @@ export function EpicDetailsModal({
           </div>
         </MetaField>
 
-        <EpicTasks />
+        <EpicTasks onAddTask={handleAddTask} />
       </div>
     </Modal>
   );

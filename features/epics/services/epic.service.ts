@@ -23,8 +23,11 @@ export async function createEpic(
   });
 }
 
-export async function getProjectEpics(projectId: string): Promise<Epic[]> {
-  return apiClient<Epic[]>(`/api/projects/${projectId}/epics`);
+// ✅ Fixed: This function now returns paginated data with total count
+export async function getProjectEpics(
+  projectId: string,
+): Promise<{ data: Epic[]; total: number }> {
+  return apiClient<{ data: Epic[]; total: number }>(`/api/projects/${projectId}/epics`);
 }
 
 export async function getProjectEpicsPaginated(

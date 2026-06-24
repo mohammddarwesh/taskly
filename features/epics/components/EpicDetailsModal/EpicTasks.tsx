@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 interface EpicTasksProps {
@@ -23,7 +25,7 @@ export function EpicTasks({ onAddTask }: EpicTasksProps) {
         <div className="w-12 h-12 rounded-xl bg-surface-low flex items-center justify-center mb-4">
           <Image
             src="/icons/tasks.svg"
-            alt=""
+            alt="Tasks"
             width={20}
             height={20}
             className="opacity-60"
@@ -39,7 +41,7 @@ export function EpicTasks({ onAddTask }: EpicTasksProps) {
         >
           <Image
             src="/icons/plus.svg"
-            alt=""
+            alt="Add task"
             width={14}
             height={14}
             className="invert"
