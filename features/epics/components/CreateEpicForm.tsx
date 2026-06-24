@@ -30,7 +30,6 @@ export default function CreateEpicForm({ projectId }: Props) {
 
   return (
     <div className="w-full max-w-3xl bg-white rounded-lg shadow-[0px_24px_48px_-12px_rgba(4,27,60,0.06)] border border-[rgba(195,198,214,0.1)]">
-      {/* Form Header - matches Figma */}
       <div className="px-8 pt-8 pb-6 border-b border-[rgba(195,198,214,0.1)]">
         <h1 className="text-4xl font-bold tracking-[-0.9px] text-[#041B3C]">
           Create New Epic
@@ -41,7 +40,7 @@ export default function CreateEpicForm({ projectId }: Props) {
       </div>
 
       <form onSubmit={onSubmit} className="p-8 space-y-8">
-        <div className="grid grid-cols-[180px_1fr] items-start gap-4">
+        <div className="grid md:grid-cols-[180px_1fr] items-start gap-4">
           <label
             htmlFor="title"
             className="font-bold text-[11px] leading-4 tracking-[0.55px] uppercase text-[#434654] pt-2"
@@ -60,8 +59,7 @@ export default function CreateEpicForm({ projectId }: Props) {
           </div>
         </div>
 
-        {/* Description – row layout */}
-        <div className="grid grid-cols-[180px_1fr] items-start gap-4">
+        <div className="grid md:grid-cols-[180px_1fr] items-start gap-4">
           <div className="flex flex-col">
             <label
               htmlFor="description"
@@ -91,7 +89,7 @@ export default function CreateEpicForm({ projectId }: Props) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           <Select
             id="assignee_id"
             label="Assignee"
@@ -113,7 +111,6 @@ export default function CreateEpicForm({ projectId }: Props) {
           </div>
         </div>
 
-        {/* Actions */}
         <FormActions
           submitLabel="Create Epic"
           isSubmitting={isSubmitting}

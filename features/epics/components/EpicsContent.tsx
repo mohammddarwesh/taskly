@@ -1,17 +1,23 @@
-'use client';
+"use client";
 
-import { ErrorScreen } from '@/components/ErrorScreen';
-import { useEpicsPage } from '../hooks/useEpicsPage';
-import { EpicsList } from './EpicsList';
-import { EpicsLoadingSkeleton } from './EpicsLoadingSkeleton';
-import { Pagination } from '@/components/Pagination';
-import { ProjectsInfiniteScrollLoader } from '@/features/projects/components/ProjectsInfiniteScrollLoader';
+import { useState } from "react";
+import { ErrorScreen } from "@/components/ErrorScreen";
+import { useEpicsPage } from "../hooks/useEpicsPage";
+import { EpicsList } from "./EpicsList";
+import { EpicsLoadingSkeleton } from "./EpicsLoadingSkeleton";
+import { Pagination } from "@/components/Pagination";
+import { ProjectsInfiniteScrollLoader } from "@/features/projects/components/ProjectsInfiniteScrollLoader";
+import { EpicDetailsModal } from "./EpicDetailsModal";
+import { Epic } from "../types/epic.types";
 
 interface Props {
   projectId: string;
 }
 
 export function EpicsContent({ projectId }: Props) {
+  const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const {
     epics,
     currentPage,
@@ -28,6 +34,23 @@ export function EpicsContent({ projectId }: Props) {
     showInfiniteScroll,
     showLoadingMore,
   } = useEpicsPage(projectId);
+
+  const handleEpicClick = (epic: Epic) => {
+    setSelectedEpic(epic);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedEpic(null);
+  };
+
+  const handleUpdateSuccess = () => {
+    setPage(currentPage);
+    // setTimeout(() => {
+    //   handleModalClose();
+    // }, 300);
+  };
 
   if (isInitialLoading) return <EpicsLoadingSkeleton />;
 
@@ -52,7 +75,7 @@ export function EpicsContent({ projectId }: Props) {
         </span>
       </div>
 
-      <EpicsList epics={epics} />
+      <EpicsList epics={epics} onEpicClick={handleEpicClick} />
 
       {showPagination && (
         <div className="hidden md:block mt-8">
@@ -69,6 +92,17 @@ export function EpicsContent({ projectId }: Props) {
         isLoading={showLoadingMore}
         show={showInfiniteScroll}
       />
+
+      {/* Edit Modal */}
+      {selectedEpic && (
+        <EpicDetailsModal
+          projectId={projectId}
+          epic={selectedEpic}
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          onUpdate={handleUpdateSuccess}
+        />
+      )}
     </>
   );
 }

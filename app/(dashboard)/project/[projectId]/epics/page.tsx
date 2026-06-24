@@ -1,11 +1,7 @@
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
-import { EpicsContent } from "@/features/epics/components/EpicsContent";
-import Image from "next/image";
-import Link from "next/link";
 import { EpicHeader } from "@/features/epics/components/EpicHeader";
 import FloatingPlusBtn from "@/components/ui/FloatingPlusBtn";
+import { EpicsContent } from "@/features/epics/components/EpicsContent";
 
 interface PageProps {
   params: Promise<{ projectId: string }>;

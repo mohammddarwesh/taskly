@@ -86,13 +86,15 @@ export async function GET(
     const { projectId } = await params;
 
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const limit = searchParams.get("limit");
     const offset = parseInt(searchParams.get("offset") || "0", 10);
-
     const url = new URL(`${backendURL}/rest/v1/project_epics`);
     url.searchParams.set("project_id", `eq.${projectId}`);
-    url.searchParams.set("limit", limit.toString());
     url.searchParams.set("offset", offset.toString());
+    url.searchParams.set("order", "created_at.desc");
+    if (limit) {
+      url.searchParams.set("limit", limit.toString());
+    }
 
     const res = await fetch(url, {
       headers: {

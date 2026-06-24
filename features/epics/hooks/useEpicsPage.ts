@@ -9,7 +9,6 @@ export function useEpicsPage(projectId: string) {
   const mode = isMobile ? "append" : "replace";
   const pageSize = 6;
 
-  // 🔒 Stable fetcher – changes only when projectId changes
   const fetcher = useCallback(
     (limit: number, offset: number) =>
       getProjectEpicsPaginated(limit, offset, projectId),

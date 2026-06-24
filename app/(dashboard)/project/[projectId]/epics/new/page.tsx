@@ -11,7 +11,7 @@ export default async function CreateEpicPage({ params }: PageProps) {
 
   return (
     <div className="bg-background">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto md:px-8">
         <Breadcrumbs />
         <Head
           head="Create New Epic"

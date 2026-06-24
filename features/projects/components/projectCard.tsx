@@ -24,10 +24,12 @@ export function ProjectCard({ project }: Props) {
                 bg-white rounded-lg border border-slate-300/10 
                 shadow-sm hover:shadow-md transition-shadow relative group"
     >
-      {/* Edit button */}
       <button
         onClick={handleEdit}
-        className="absolute top-3 right-3 p-1.5 rounded-full bg-white/80 hover:bg-white cursor-pointer text-slate-400 hover:text-slate-700 transition-colors shadow-sm border border-slate-200/50 opacity-0 group-hover:opacity-100 focus:opacity-100"
+        className={`absolute top-3 right-3 p-1.5 rounded-full 
+          bg-white/80 hover:bg-white cursor-pointer text-slate-400
+          hover:text-slate-700 transition-colors shadow-sm border border-slate-200/50
+          md:opacity-0 group-hover:opacity-100 focus:opacity-100`}
         aria-label="Edit project"
       >
         <Image src="/icons/edit-pencil.svg" alt="Edit" width={16} height={16} />

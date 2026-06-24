@@ -1,11 +1,12 @@
-import { Epic } from '../types/epic.types';
-import { EpicCard } from './EpicCard';
+import { Epic } from "../types/epic.types";
+import { EpicCard } from "./EpicCard";
 
-interface Props {
+interface EpicsListProps {
   epics: Epic[];
+  onEpicClick?: (epic: Epic) => void;
 }
 
-export function EpicsList({ epics }: Props) {
+export function EpicsList({ epics, onEpicClick }: EpicsListProps) {
   if (epics.length === 0) {
     return (
       <div className="text-center py-12 text-text-secondary">
@@ -17,7 +18,11 @@ export function EpicsList({ epics }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {epics.map((epic) => (
-        <EpicCard key={epic.id} epic={epic} />
+        <EpicCard
+          key={epic.id}
+          epic={epic}
+          onClick={() => onEpicClick?.(epic)}
+        />
       ))}
     </div>
   );

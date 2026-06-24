@@ -2,9 +2,9 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  createEpicSchema,
-  CreateEpicFormValues,
-} from "../schemas/create-epic.schema";
+  epicFormSchema,
+  EpicFormValues,
+} from "../schemas/epic.schema";
 import { createEpic } from "../services/epic.service";
 import { isApiError } from "@/types/apiError.types";
 import { toast } from "react-toastify";
@@ -12,8 +12,8 @@ import { toast } from "react-toastify";
 export function useCreateEpic(projectId: string) {
   const router = useRouter();
 
-  const form = useForm<CreateEpicFormValues>({
-    resolver: zodResolver(createEpicSchema),
+  const form = useForm<EpicFormValues>({
+    resolver: zodResolver(epicFormSchema),
     defaultValues: {
       title: "",
       description: "",

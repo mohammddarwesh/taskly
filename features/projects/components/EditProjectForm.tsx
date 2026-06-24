@@ -59,7 +59,7 @@ export default function EditProjectForm({ projectId }: EditProjectFormProps) {
   return (
     <div className="w-full max-w-2xl bg-surface-card rounded-lg shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
       <div className="card">
-        <div className="flex items-center gap-4 px-8 pt-8 pb-10 border-b border-surface-low">
+        <div className="flex items-center gap-4 md:px-8 pt-8 pb-10 border-b border-surface-low">
           <div className="flex items-center justify-center w-11.5 h-11 rounded bg-icon/10 shrink-0">
             <Image
               src="/icons/edit-pencil.svg"
@@ -77,7 +77,7 @@ export default function EditProjectForm({ projectId }: EditProjectFormProps) {
           />
         </div>
 
-        <form onSubmit={onSubmit} className="px-8 pt-8 space-y-8">
+        <form onSubmit={onSubmit} className="md:px-8 pt-8 space-y-8">
           <div>
             <Input
               id="name"
