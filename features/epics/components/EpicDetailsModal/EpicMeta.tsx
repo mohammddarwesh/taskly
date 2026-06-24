@@ -56,7 +56,7 @@ export function EpicMeta({
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+    <div className="flex gap-6 pt-2 ">
       <MetaField label="Created By">
         <UserDisplay name={createdByName} emptyLabel="Unknown" />
       </MetaField>
@@ -86,7 +86,7 @@ export function EpicMeta({
         />
       </MetaField>
 
-      <MetaField label="Deadline">
+      {/* <MetaField label="Deadline">
         <EditableField
           label="Deadline"
           isEditing={deadlineEditOpen}
@@ -127,7 +127,7 @@ export function EpicMeta({
             />
           }
         />
-      </MetaField>
+      </MetaField> */}
     </div>
   );
 }
