@@ -2,7 +2,7 @@ import { cn } from "@/libs/utils";
 import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
+  label?: string;
   error?: string;
   icon?: ReactNode;
   labelClassName?: string;

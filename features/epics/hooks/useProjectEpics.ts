@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { getProjectEpics } from '../services/epic.service';
-import { Epic } from '../types/epic.types';
-import { isApiError } from '@/types/apiError.types';
-import { toast } from 'react-toastify';
+import { useEffect, useState } from "react";
+import { getProjectEpics } from "../services/epic.service";
+import { Epic } from "../types/epic.types";
+import { isApiError } from "@/types/apiError.types";
+import { toast } from "react-toastify";
 
 export function useProjectEpics(projectId: string) {
   const [epics, setEpics] = useState<Epic[]>([]);
@@ -12,11 +12,11 @@ export function useProjectEpics(projectId: string) {
   useEffect(() => {
     const fetchEpics = async () => {
       try {
-        const data = await getProjectEpics(projectId);
-        setEpics(data);
+        const response = await getProjectEpics(projectId);
+        setEpics(response.data);
         setError(null);
       } catch (err) {
-        const message = isApiError(err) ? err.msg : 'Failed to load epics';
+        const message = isApiError(err) ? err.msg : "Failed to load epics";
         setError(message);
         toast.error(message);
       } finally {

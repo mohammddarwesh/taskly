@@ -11,7 +11,8 @@ const ROUTE_MAP: Record<string, string> = {
   edit: "Edit Project",
   members: "Members",
   epics: "Epics",
-  new: "New Epic",
+  new: "New",
+  tasks: "Tasks",
 };
 
 type BreadcrumbItem = {
