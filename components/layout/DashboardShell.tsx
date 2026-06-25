@@ -30,8 +30,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoading, dispatch]);
 
-
-  // Persist collapse state
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("sidebar-collapsed", String(isCollapsed));
@@ -40,7 +38,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   const handleToggleCollapse = () => setIsCollapsed((prev) => !prev);
 
-  // Close mobile menu on window resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) setIsMobileMenuOpen(false);
@@ -72,12 +69,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         navItems={navItems}
       />
 
-      <div className="flex flex-1 flex-col h-screen ">
+      <div className="flex flex-1 flex-col h-screen min-w-0">
         <Navbar
           onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           isMobileMenuOpen={isMobileMenuOpen}
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-0 ">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-0 ">
+          {children}
+        </main>
       </div>
     </div>
   );
