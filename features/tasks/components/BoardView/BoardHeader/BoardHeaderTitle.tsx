@@ -1,5 +1,4 @@
 "use client";
-
 export function BoardHeaderTitle() {
   return (
     <div className="flex flex-col gap-1">

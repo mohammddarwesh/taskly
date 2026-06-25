@@ -3,11 +3,7 @@
 import Image from "next/image";
 import { cn } from "@/libs/utils";
 
-interface BoardSearchInputProps {
-  className?: string;
-}
-
-export function BoardSearchInput({ className }: BoardSearchInputProps) {
+export function BoardSearchInput({ className }: { className?: string }) {
   return (
     <div className={cn("relative", className)}>
       <Image
