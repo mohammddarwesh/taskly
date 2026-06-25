@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Task, TaskStatusType } from "../types/task.types";
-import { getProjectTasks } from "../services/task.service";
+import { getProjectTasks } from "@/features/tasks/services/task.service";
+import { Task, TaskStatusType } from "@/features/tasks/types/task.types";
 import { isApiError } from "@/types/apiError.types";
 
-export function useTasksByStatus(projectId: string, status: TaskStatusType) {
+
+export function useProjectTasks(projectId: string, status?: TaskStatusType | null) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,9 +21,7 @@ export function useTasksByStatus(projectId: string, status: TaskStatusType) {
         const res = await getProjectTasks({ projectId, status });
         setTasks(res.data);
       } catch (err) {
-        const message = isApiError(err)
-          ? err.msg
-          : `Failed to load ${status} tasks`;
+        const message = isApiError(err) ? err.msg : "Failed to load tasks";
         setError(message);
       } finally {
         setIsLoading(false);
