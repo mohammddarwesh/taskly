@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { TaskStatusType } from "@/features/tasks/types/task.types";
 import { statusConfig } from "@/features/tasks/utils/statusConfig";
-import { useTasksByStatus } from "@/features/tasks/hooks/useTasksByStatus";
 import { ColumnHeader } from "./_components/ColumnHeader";
 import { TaskListContent } from "./_components/TaskListContent";
 import { AddTaskDashedButton } from "./_components/AddTaskDashedButton";
+import { useProjectTasks } from "../../hooks/useProjectTasks";
 
 interface TaskColumnProps {
   projectId: string;
@@ -16,7 +16,7 @@ interface TaskColumnProps {
 export function TaskColumn({ projectId, status }: TaskColumnProps) {
   const router = useRouter();
   const config = statusConfig[status] || statusConfig.TO_DO;
-  const { tasks, isLoading, error } = useTasksByStatus(projectId, status);
+  const { tasks, isLoading, error } = useProjectTasks(projectId, status);
 
   const handleAddTask = () => {
     router.push(`/project/${projectId}/tasks/new?status=${status}`);
