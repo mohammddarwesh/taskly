@@ -19,12 +19,16 @@ export async function GET(
     const { projectId } = await params;
     const { searchParams } = new URL(request.url);
     const epicId = searchParams.get("epic_id");
-
+    const status = searchParams.get("status");
     const url = new URL(`${backendURL}/rest/v1/project_tasks`);
     url.searchParams.set("project_id", `eq.${projectId}`);
 
     if (epicId) {
       url.searchParams.set("epic_id", `eq.${epicId}`);
+    }
+
+    if (status) {
+      url.searchParams.set("status", `eq.${status}`);
     }
 
     const res = await fetch(url, {
