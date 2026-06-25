@@ -20,13 +20,22 @@ export async function createTask(
   });
 }
 
-export async function getProjectTasks(
-  projectId: string,
-  epicId?: string | null
-): Promise<{ data: Task[]; total: number }> {
+interface GetTasksParams {
+  projectId: string;
+  status?: string | null;
+  epicId?: string | null;
+}
+export async function getProjectTasks({
+  projectId,
+  status,
+  epicId,
+}: GetTasksParams): Promise<{ data: Task[]; total: number }> {
   let url = `/api/projects/${projectId}/tasks`;
-  if (epicId) {
-    url += `?epic_id=${epicId}`;
+  const params = new URLSearchParams();
+  if (status) params.append("status", status);
+  if (epicId) params.append("epic_id", epicId);
+  if (params.toString()) {
+    url += `?${params.toString()}`;
   }
   return apiClient<{ data: Task[]; total: number }>(url);
 }

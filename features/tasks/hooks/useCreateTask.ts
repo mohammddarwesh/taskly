@@ -4,11 +4,11 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { isApiError } from "@/types/apiError.types";
 import { createTaskSchema, CreateTaskFormValues } from "../schemas/task.schema";
-import { TaskStatus } from "../types/task.types";
+import { TaskStatus, TaskStatusType } from "../types/task.types";
 import { createTask } from "../services/task.service";
 
 export function useCreateTask(
@@ -17,11 +17,14 @@ export function useCreateTask(
 ) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialStatus =
+    (searchParams.get("status") as TaskStatusType) || TaskStatus.TO_DO;
 
   const form = useForm<CreateTaskFormValues>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
-      status: TaskStatus.TO_DO, // Default set here instead of Zod
+      status: initialStatus,
       description: "",
       epic_id: initialEpicId ?? undefined,
       assignee_id: undefined,

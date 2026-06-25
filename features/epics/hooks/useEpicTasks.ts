@@ -23,7 +23,7 @@ export function useEpicTasks(projectId: string, epicId: string | null) {
       }
 
       try {
-        const response = await getProjectTasks(projectId, epicId);
+        const response = await getProjectTasks({ projectId, epicId });
         setTasks(response.data);
       } catch (err) {
         const message = isApiError(err) ? err.msg : "Failed to load tasks";
