@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ Correct import
 import { ErrorScreen } from "@/components/ErrorScreen";
 import { useEpicsPage } from "../hooks/useEpicsPage";
 import { EpicsList } from "./EpicsList";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function EpicsContent({ projectId }: Props) {
+  const router = useRouter();
   const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -47,6 +49,10 @@ export function EpicsContent({ projectId }: Props) {
 
   const handleUpdateSuccess = () => {
     setPage(currentPage);
+  };
+
+  const handleTaskClick = (taskId: string) => {
+    router.push(`/project/${projectId}/tasks?taskId=${taskId}`);
   };
 
   if (isInitialLoading) return <EpicsLoadingSkeleton />;
@@ -90,7 +96,6 @@ export function EpicsContent({ projectId }: Props) {
         show={showInfiniteScroll}
       />
 
-      {/* Edit Modal */}
       {selectedEpic && (
         <EpicDetailsModal
           projectId={projectId}
@@ -98,6 +103,7 @@ export function EpicsContent({ projectId }: Props) {
           isOpen={isModalOpen}
           onClose={handleModalClose}
           onUpdate={handleUpdateSuccess}
+          onTaskClick={handleTaskClick}
         />
       )}
     </>
