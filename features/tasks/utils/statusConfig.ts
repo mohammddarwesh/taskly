@@ -46,7 +46,7 @@ export const statusConfig = {
   [TaskStatus.DONE]: {
     dotColor: "bg-[#2ECC71]",
     borderColor: "border-l-[#2ECC71]",
-    bg: "bg-[#E8F5E9]",
-    text: "text-[#2E7D32]",
+    bg: "bg-[#82F9BE]",
+    text: "text-[#002113]",
   },
 };
