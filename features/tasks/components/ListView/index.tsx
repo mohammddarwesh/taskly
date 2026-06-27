@@ -4,12 +4,17 @@ import { useProjectTasks } from "@/features/tasks/hooks/useProjectTasks";
 import { TaskTableHeader } from "./TaskTableHeader";
 import { TaskTableRow } from "./TaskTableRow";
 import { TaskTableFooter } from "./TaskTableFooter";
+import { Task } from "@/features/tasks/types/task.types";
 
 interface ProjectTasksListProps {
   projectId: string;
+  onTaskClick?: (taskId: string) => void;
 }
 
-export function ProjectTasksList({ projectId }: ProjectTasksListProps) {
+export function ProjectTasksList({
+  projectId,
+  onTaskClick,
+}: ProjectTasksListProps) {
   const { tasks, isLoading, error } = useProjectTasks(projectId);
 
   return (
@@ -42,16 +47,17 @@ export function ProjectTasksList({ projectId }: ProjectTasksListProps) {
             )}
             {!isLoading &&
               !error &&
-              tasks.map((task) => <TaskTableRow key={task.id} task={task} />)}
+              tasks.map((task) => (
+                <TaskTableRow
+                  key={task.id}
+                  task={task}
+                  onTaskClick={onTaskClick}
+                />
+              ))}
           </tbody>
         </table>
       </div>
-      <div className="p-4 md:p-6">
-        <TaskTableFooter
-          total={tasks.length > 0 ? 24 : 0}
-          shown={tasks.length}
-        />
-      </div>
+      <TaskTableFooter total={tasks.length > 0 ? 24 : 0} shown={tasks.length} />
     </div>
   );
 }
