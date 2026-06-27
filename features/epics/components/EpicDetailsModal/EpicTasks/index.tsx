@@ -13,10 +13,12 @@ interface EpicTasksProps {
   tasks: Task[];
   isLoading: boolean;
   error: string | null;
+  onTaskClick?: (taskId: string) => void;
 }
 
 export function EpicTasks({
   onAddTask,
+  onTaskClick,
   tasks,
   isLoading,
   error,
@@ -34,7 +36,7 @@ export function EpicTasks({
         <div className="flex flex-col gap-3 md:gap-0">
           <div className="md:border md:border-[#E8EDFF] md:rounded-xl md:bg-[#F9F9FF] md:divide-y md:divide-[#E8EDFF]">
             {tasks.map((task) => (
-              <EpicTaskItem key={task.id} task={task} />
+              <EpicTaskItem key={task.id} task={task} onTaskClick={onTaskClick}/>
             ))}
           </div>
         </div>
