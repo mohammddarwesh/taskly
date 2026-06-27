@@ -16,7 +16,7 @@ export function StatusBadge({ status, count, config }: StatusBadgeProps) {
       <span className="text-[13px] font-semibold text-[#434654] uppercase tracking-[0.6px]">
         {status.replace(/_/g, " ")}
       </span>
-      <span className="px-2 py-[1px] rounded-full bg-[#E8EDFF] text-[11px] font-bold text-[#434654]">
+      <span className="px-2 py-px rounded-full bg-[#E8EDFF] text-[11px] font-bold text-[#434654]">
         {count}
       </span>
     </div>
