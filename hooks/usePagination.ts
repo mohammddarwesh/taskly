@@ -1,16 +1,16 @@
 "use client";
 
 import { isApiError } from "@/types/apiError.types";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 interface PaginatedResponse<T> {
   data: T[];
   total: number;
 }
+
 interface usePaginationOptions<T> {
   fetcher: (limit: number, offset: number) => Promise<PaginatedResponse<T>>;
   pageSize?: number;
-  onAuthError?: () => void;
   mode?: "replace" | "append";
 }
 
@@ -24,18 +24,18 @@ interface UsePaginationReturn<T> {
   setPage: (page: number) => void;
   nextPage: () => void;
   prevPage: () => void;
+  fetchPage: (page: number) => Promise<void>;
 }
 
 export function usePagination<T>({
   fetcher,
   pageSize = 10,
   mode = "replace",
-  //   onAuthError,
 }: usePaginationOptions<T>): UsePaginationReturn<T> {
   const [data, setData] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const totalPages = Math.ceil(totalCount / pageSize);
@@ -43,57 +43,37 @@ export function usePagination<T>({
   const fetchPage = useCallback(
     async (page: number) => {
       setCurrentPage(page);
-
       setIsLoading(true);
       setError(null);
       try {
         const offset = (page - 1) * pageSize;
         const { data: newData, total } = await fetcher(pageSize, offset);
         setTotalCount(total);
-        if (mode === "append") {
-          setData((prev) => [...prev, ...newData]);
-        } else {
-          setData(newData);
-        }
+        setData((prev) =>
+          mode === "append" ? [...prev, ...newData] : newData,
+        );
       } catch (err) {
-        if (isApiError(err)) {
-          setError(err?.msg || "Failed to get projects");
-        }
+        setError(isApiError(err) ? err.msg : "An unexpected error occurred");
       } finally {
         setIsLoading(false);
       }
     },
     [fetcher, mode, pageSize],
   );
-  useEffect(() => {
-    const initialFetch = async () => {
-      await fetchPage(1);
-    };
-    initialFetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const setPage = useCallback(
     (page: number) => {
-      if (page >= 1 && page <= totalPages) {
-        fetchPage(page);
-      }
+      if (page >= 1 && page <= totalPages) fetchPage(page);
     },
     [totalPages, fetchPage],
   );
 
   const nextPage = useCallback(() => {
-    if (currentPage < totalPages) {
-      const nextPage = currentPage + 1;
-      fetchPage(nextPage);
-    }
+    if (currentPage < totalPages) fetchPage(currentPage + 1);
   }, [currentPage, totalPages, fetchPage]);
 
   const prevPage = useCallback(() => {
-    if (currentPage > 1) {
-      const PrevPage = currentPage - 1;
-      fetchPage(PrevPage);
-    }
+    if (currentPage > 1) fetchPage(currentPage - 1);
   }, [currentPage, fetchPage]);
 
   return {
@@ -106,5 +86,6 @@ export function usePagination<T>({
     setPage,
     nextPage,
     prevPage,
+    fetchPage,
   };
 }
