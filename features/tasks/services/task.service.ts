@@ -25,18 +25,24 @@ interface GetTasksParams {
   status?: string | null;
   epicId?: string | null;
   id?: string | null;
+  limit?: number;
+  offset?: number;
 }
 export async function getProjectTasks({
   projectId,
   status,
   epicId,
   id,
+  limit,
+  offset,
 }: GetTasksParams): Promise<{ data: Task[]; total: number }> {
   let url = `/api/projects/${projectId}/tasks`;
   const params = new URLSearchParams();
   if (status) params.append("status", status);
   if (epicId) params.append("epic_id", epicId);
   if (id) params.append("id", id);
+  if (limit !== undefined) params.append("limit", limit.toString());
+  if (offset !== undefined) params.append("offset", offset.toString());
   if (params.toString()) {
     url += `?${params.toString()}`;
   }

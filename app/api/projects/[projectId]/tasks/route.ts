@@ -21,17 +21,27 @@ export async function GET(
     const epicId = searchParams.get("epic_id");
     const status = searchParams.get("status");
     const taskId = searchParams.get("id");
+    const limit = searchParams.get("limit");
+    const offset = searchParams.get("offset");
+
     const url = new URL(`${backendURL}/rest/v1/project_tasks`);
     url.searchParams.set("project_id", `eq.${projectId}`);
 
     if (epicId) {
       url.searchParams.set("epic_id", `eq.${epicId}`);
     }
-
     if (status) {
       url.searchParams.set("status", `eq.${status}`);
     }
-    if (taskId) url.searchParams.set("id", `eq.${taskId}`);
+    if (taskId) {
+      url.searchParams.set("id", `eq.${taskId}`);
+    }
+    if (limit) {
+      url.searchParams.set("limit", limit);
+    }
+    if (offset) {
+      url.searchParams.set("offset", offset);
+    }
 
     const res = await fetch(url, {
       headers: {
@@ -73,6 +83,7 @@ export async function GET(
     );
   }
 }
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ projectId: string }> },
