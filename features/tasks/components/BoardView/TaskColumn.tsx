@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { TaskStatusType, Task } from "@/features/tasks/types/task.types";
+import { TaskStatusType } from "@/features/tasks/types/task.types";
 import { statusConfig } from "@/features/tasks/utils/statusConfig";
 import { useProjectTasks } from "@/features/tasks/hooks/useProjectTasks";
 import { ColumnHeader } from "./_components/ColumnHeader";
@@ -21,7 +21,11 @@ export function TaskColumn({
 }: TaskColumnProps) {
   const router = useRouter();
   const config = statusConfig[status] || statusConfig.TO_DO;
-  const { tasks, isLoading, error } = useProjectTasks(projectId, status);
+  const { tasks, isLoading, error, sentinelRef, hasMore } = useProjectTasks(
+    projectId,
+    "infinite",
+    status,
+  );
 
   const handleAddTask = () => {
     router.push(`/project/${projectId}/tasks/new?status=${status}`);
@@ -43,6 +47,9 @@ export function TaskColumn({
         isLoading={isLoading}
         error={error}
         onTaskClick={onTaskClick}
+        sentinelRef={sentinelRef}
+        hasMore={hasMore}
+        isLoadingMore={isLoading && tasks.length > 0}
       />
     </div>
   );
