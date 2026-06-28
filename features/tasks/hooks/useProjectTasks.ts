@@ -1,35 +1,93 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getProjectTasks } from "@/features/tasks/services/task.service";
-import { Task, TaskStatusType } from "@/features/tasks/types/task.types";
-import { isApiError } from "@/types/apiError.types";
+import { useCallback, useEffect, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { usePagination } from "@/hooks/usePagination";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { getProjectTasks } from "../services/task.service";
+import { TaskStatusType } from "../types/task.types";
 
+type FetchMode = "paginate" | "infinite";
 
-export function useProjectTasks(projectId: string, status?: TaskStatusType | null) {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function useProjectTasks(
+  projectId: string,
+  mode: FetchMode = "paginate",
+  status?: TaskStatusType | null,
+  pageSize: number = 6,
+) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
+  const hasMounted = useRef(false);
+
+  const {
+    data: tasks,
+    currentPage,
+    totalPages,
+    totalCount,
+    isLoading,
+    error,
+    fetchPage,
+  } = usePagination({
+    fetcher: (limit, offset) =>
+      getProjectTasks({ projectId, status, limit, offset }),
+    pageSize,
+    mode: mode === "infinite" ? "append" : "replace",
+  });
 
   useEffect(() => {
-    if (!projectId) return;
+    const pageToLoad = mode === "paginate" ? pageFromUrl : 1;
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      fetchPage(pageToLoad);
+      return;
+    }
+    if (mode === "paginate" && currentPage !== pageFromUrl) {
+      fetchPage(pageFromUrl);
+    }
+  }, [pageFromUrl, mode, fetchPage, currentPage]);
 
-    const fetchTasks = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const res = await getProjectTasks({ projectId, status });
-        setTasks(res.data);
-      } catch (err) {
-        const message = isApiError(err) ? err.msg : "Failed to load tasks";
-        setError(message);
-      } finally {
-        setIsLoading(false);
+  const setPage = useCallback(
+    (page: number) => {
+      if (mode === "paginate") {
+        const newParams = new URLSearchParams(searchParams.toString());
+        newParams.set("page", page.toString());
+        router.push(`?${newParams.toString()}`, { scroll: false });
       }
-    };
+    },
+    [mode, searchParams, router],
+  );
 
-    fetchTasks();
-  }, [projectId, status]);
+  const nextPage = useCallback(() => {
+    if (mode === "paginate") {
+      if (currentPage < totalPages) setPage(currentPage + 1);
+    } else {
+      if (currentPage < totalPages) fetchPage(currentPage + 1);
+    }
+  }, [mode, currentPage, totalPages, setPage, fetchPage]);
 
-  return { tasks, isLoading, error };
+  const { sentinelRef } = useInfiniteScroll(
+    isLoading,
+    mode === "infinite" && currentPage < totalPages,
+    nextPage,
+    "0px 0px 150px 0px",
+  );
+
+  return {
+    tasks,
+    currentPage,
+    totalPages,
+    totalCount,
+    isLoading,
+    error,
+    setPage,
+    nextPage,
+    sentinelRef,
+    hasMore: currentPage < totalPages,
+    isEmpty: !isLoading && !error && totalCount === 0,
+    isInitialLoading: isLoading && tasks.length === 0,
+    showPagination: mode === "paginate" && totalPages > 1,
+    showInfiniteScroll: mode === "infinite" && currentPage < totalPages,
+    showLoadingMore: isLoading && tasks.length > 0 && mode === "infinite",
+  };
 }
