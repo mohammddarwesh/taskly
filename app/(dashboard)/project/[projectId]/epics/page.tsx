@@ -16,7 +16,6 @@ export default async function ProjectEpicsPage({ params }: PageProps) {
         <div className="hidden md:block">
           <Breadcrumbs />
         </div>
-        <EpicHeader projectId={projectId} />
         <EpicsContent projectId={projectId} />
         <FloatingPlusBtn href={`/project/${projectId}/epics/new`} />
       </div>
