@@ -1,5 +1,4 @@
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { EpicHeader } from "@/features/epics/components/EpicHeader";
 import FloatingPlusBtn from "@/components/ui/FloatingPlusBtn";
 import { EpicsContent } from "@/features/epics/components/EpicsContent";
 

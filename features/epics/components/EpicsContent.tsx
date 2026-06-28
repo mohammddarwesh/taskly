@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ErrorScreen } from "@/components/ErrorScreen";
 import { useEpicsPage } from "../hooks/useEpicsPage";
@@ -10,7 +10,7 @@ import { Pagination } from "@/components/Pagination";
 import { ProjectsInfiniteScrollLoader } from "@/features/projects/components/ProjectsInfiniteScrollLoader";
 import { EpicDetailsModal } from "./EpicDetailsModal";
 import { Epic } from "../types/epic.types";
-import { EpicHeader } from "./EpicHeader";
+import { EpicHeader } from "./EpicHeader"; // Assuming this exists
 
 interface Props {
   projectId: string;
@@ -36,8 +36,8 @@ export function EpicsContent({ projectId }: Props) {
     showPagination,
     showInfiniteScroll,
     showLoadingMore,
-    search,
-    updateSearch,
+    search, // Added from conflict
+    updateSearch, // Added from conflict
   } = useEpicsPage(projectId);
 
   const handleEpicClick = (epic: Epic) => {
@@ -66,28 +66,24 @@ export function EpicsContent({ projectId }: Props) {
 
   return (
     <>
-      <EpicHeader
-        projectId={projectId}
-        searchValue={search}
-        onSearchChange={updateSearch}
-      />
+      <Suspense
+        fallback={
+          <div className="h-12 w-full animate-pulse bg-gray-100 rounded" />
+        }
+      >
+        <EpicHeader
+          projectId={projectId}
+          searchValue={search}
+          onSearchChange={updateSearch}
+        />
+      </Suspense>
 
-      {isEmpty && (
-        <div className="text-center py-12 text-[#434654]">
-          {search
-            ? "No epics found matching your search"
-            : "No epics found for this project."}
-        </div>
-      )}
-
-      {epics.length > 0 && (
-        <>
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-sm font-medium text-[#434654]">
-              {!isMobile && `Showing ${epics.length} of ${totalCount} epics`}
-              {isMobile && `${totalCount} epics`}
-            </span>
-          </div>
+      <div className="flex items-center justify-between mb-6">
+        <span className="text-sm font-medium text-[#434654]">
+          {!isMobile && `Showing ${epics.length} of ${totalCount} epics`}
+          {isMobile && `${totalCount} epics`}
+        </span>
+      </div>
 
           <EpicsList epics={epics} onEpicClick={handleEpicClick} />
 
