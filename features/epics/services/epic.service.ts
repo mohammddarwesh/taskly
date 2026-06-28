@@ -27,17 +27,22 @@ export async function createEpic(
 export async function getProjectEpics(
   projectId: string,
 ): Promise<{ data: Epic[]; total: number }> {
-  return apiClient<{ data: Epic[]; total: number }>(`/api/projects/${projectId}/epics`);
+  return apiClient<{ data: Epic[]; total: number }>(
+    `/api/projects/${projectId}/epics`,
+  );
 }
 
 export async function getProjectEpicsPaginated(
   limit: number,
   offset: number,
   projectId: string,
+  search?: string,
 ): Promise<PaginatedEpics> {
-  return apiClient<PaginatedEpics>(
-    `/api/projects/${projectId}/epics?limit=${limit}&offset=${offset}`,
-  );
+  let url = `/api/projects/${projectId}/epics?limit=${limit}&offset=${offset}`;
+  if (search) {
+    url += `&search=${encodeURIComponent(search)}`;
+  }
+  return apiClient<PaginatedEpics>(url);
 }
 
 export async function updateEpic(
