@@ -24,18 +24,32 @@ interface GetTasksParams {
   projectId: string;
   status?: string | null;
   epicId?: string | null;
+  id?: string | null;
 }
 export async function getProjectTasks({
   projectId,
   status,
   epicId,
+  id,
 }: GetTasksParams): Promise<{ data: Task[]; total: number }> {
   let url = `/api/projects/${projectId}/tasks`;
   const params = new URLSearchParams();
   if (status) params.append("status", status);
   if (epicId) params.append("epic_id", epicId);
+  if (id) params.append("id", id);
   if (params.toString()) {
     url += `?${params.toString()}`;
   }
   return apiClient<{ data: Task[]; total: number }>(url);
+}
+
+export async function getTaskById(
+  projectId: string,
+  taskId: string,
+): Promise<Task> {
+  const res = await getProjectTasks({ projectId, id: taskId });
+  if (res.data && res.data.length > 0) {
+    return res.data[0];
+  }
+  throw new Error("Task not found");
 }

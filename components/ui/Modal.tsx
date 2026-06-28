@@ -12,6 +12,7 @@ interface ModalProps {
   children: ReactNode;
   className?: string;
   closeOnOverlayClick?: boolean;
+  hideHeader?: boolean;
 }
 
 export function Modal({
@@ -21,6 +22,7 @@ export function Modal({
   children,
   className,
   closeOnOverlayClick = true,
+  hideHeader = false,
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -55,24 +57,28 @@ export function Modal({
         ref={modalRef}
         className={cn(
           "relative bg-surface-card rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto",
-          className
+          className,
         )}
         role="dialog"
         aria-modal="true"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-surface-low bg-surface-card">
-          {title && (
-            <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
-          )}
-          <IconButton
-            label="Close modal"
-            onClick={onClose}
-            className="ml-auto"
-          >
-            <Image src="/icons/x.svg" alt="Close" width={20} height={20} />
-          </IconButton>
-        </div>
-        <div className="p-6">{children}</div>
+        {!hideHeader && (
+          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-surface-low bg-surface-card">
+            {title && (
+              <h2 className="text-lg font-semibold text-text-primary">
+                {title}
+              </h2>
+            )}
+            <IconButton
+              label="Close modal"
+              onClick={onClose}
+              className="ml-auto"
+            >
+              <Image src="/icons/x.svg" alt="Close" width={20} height={20} />
+            </IconButton>
+          </div>
+        )}
+        <div className="flex flex-col w-full  h-full">{children}</div>
       </div>
     </div>
   );

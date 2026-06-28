@@ -20,6 +20,7 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const epicId = searchParams.get("epic_id");
     const status = searchParams.get("status");
+    const taskId = searchParams.get("id");
     const url = new URL(`${backendURL}/rest/v1/project_tasks`);
     url.searchParams.set("project_id", `eq.${projectId}`);
 
@@ -30,6 +31,7 @@ export async function GET(
     if (status) {
       url.searchParams.set("status", `eq.${status}`);
     }
+    if (taskId) url.searchParams.set("id", `eq.${taskId}`);
 
     const res = await fetch(url, {
       headers: {

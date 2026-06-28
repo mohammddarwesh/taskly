@@ -19,7 +19,12 @@ const formatCardDate = (dateStr: string | null) => {
     .toUpperCase();
 };
 
-export function TaskCard({ task }: { task: Task }) {
+interface TaskCardProps {
+  task: Task;
+  onTaskClick?: (taskId: string) => void;
+}
+
+export function TaskCard({ task, onTaskClick }: TaskCardProps) {
   const config =
     statusConfig[task.status as keyof typeof statusConfig] ||
     statusConfig.TO_DO;
@@ -28,8 +33,9 @@ export function TaskCard({ task }: { task: Task }) {
 
   return (
     <div
+      onClick={() => onTaskClick?.(task.id)}
       className={cn(
-        "flex flex-col gap-3 p-4 bg-[#FFFFFF] rounded-lg border border-[#E8EDFF] border-l-4 transition-shadow hover:shadow-sm",
+        "flex flex-col gap-3 p-4 bg-[#FFFFFF] rounded-lg border border-[#E8EDFF] border-l-4 transition-shadow hover:shadow-sm cursor-pointer",
         config.borderColor,
       )}
     >

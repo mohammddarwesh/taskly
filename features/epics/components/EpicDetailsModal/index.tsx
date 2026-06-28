@@ -20,6 +20,7 @@ interface EpicDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUpdate?: () => void;
+  onTaskClick?: (taskId: string) => void;
 }
 
 export function EpicDetailsModal({
@@ -28,6 +29,7 @@ export function EpicDetailsModal({
   isOpen,
   onClose,
   onUpdate,
+  onTaskClick,
 }: EpicDetailsModalProps) {
   const router = useRouter();
   const { members, isLoading: membersLoading } = useProjectMembers(projectId);
@@ -67,7 +69,7 @@ export function EpicDetailsModal({
       onClose={onClose}
       closeOnOverlayClick={!isSaving && editingField === null}
     >
-      <div className="space-y-6" onClick={(e) => e.stopPropagation()}>
+      <div className="space-y-6 p-6" onClick={(e) => e.stopPropagation()}>
         <EpicModalHeader
           epicId={epic.epic_id}
           titleValue={titleValue || epic.title}
@@ -143,6 +145,7 @@ export function EpicDetailsModal({
           isLoading={isLoading}
           error={error}
           onAddTask={handleAddTask}
+          onTaskClick={onTaskClick}
         />
       </div>
     </Modal>
