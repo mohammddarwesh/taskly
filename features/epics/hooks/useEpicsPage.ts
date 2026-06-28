@@ -13,13 +13,22 @@ export function useEpicsPage(projectId: string) {
   const pageSize = 6;
   const searchParams = useSearchParams();
   const router = useRouter();
+
   const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
+  const searchFromUrl = searchParams.get("search") || "";
+
   const hasMounted = useRef(false);
+  const lastFetchKeyRef = useRef<string>("");
 
   const fetcher = useCallback(
     (limit: number, offset: number) =>
-      getProjectEpicsPaginated(limit, offset, projectId),
-    [projectId],
+      getProjectEpicsPaginated(
+        limit,
+        offset,
+        projectId,
+        searchFromUrl || undefined,
+      ),
+    [projectId, searchFromUrl],
   );
 
   const {
@@ -36,17 +45,23 @@ export function useEpicsPage(projectId: string) {
     mode,
   });
 
+  // Fetch whenever page or search changes (after mount)
   useEffect(() => {
     const pageToLoad = !isMobile ? pageFromUrl : 1;
+    const key = `${pageToLoad}-${searchFromUrl}`;
+
     if (!hasMounted.current) {
       hasMounted.current = true;
+      lastFetchKeyRef.current = key;
       fetchPage(pageToLoad);
       return;
     }
-    if (!isMobile && currentPage !== pageFromUrl) {
-      fetchPage(pageFromUrl);
+
+    if (key !== lastFetchKeyRef.current) {
+      lastFetchKeyRef.current = key;
+      fetchPage(pageToLoad);
     }
-  }, [pageFromUrl, isMobile, fetchPage, currentPage]);
+  }, [pageFromUrl, searchFromUrl, isMobile, fetchPage]);
 
   const setPage = useCallback(
     (page: number) => {
@@ -57,6 +72,21 @@ export function useEpicsPage(projectId: string) {
       }
     },
     [isMobile, searchParams, router],
+  );
+
+  const updateSearch = useCallback(
+    (value: string) => {
+      const newParams = new URLSearchParams(searchParams.toString());
+      const trimmed = value.trim();
+      if (trimmed) {
+        newParams.set("search", trimmed);
+      } else {
+        newParams.delete("search");
+      }
+      newParams.set("page", "1");
+      router.push(`?${newParams.toString()}`, { scroll: false });
+    },
+    [searchParams, router],
   );
 
   const nextPage = useCallback(() => {
@@ -84,6 +114,8 @@ export function useEpicsPage(projectId: string) {
     nextPage,
     sentinelRef,
     isMobile,
+    search: searchFromUrl,
+    updateSearch,
     isEmpty: !isLoading && !error && totalCount === 0,
     isInitialLoading: isLoading && epics.length === 0,
     showPagination: !isMobile && totalPages > 1,
