@@ -8,6 +8,9 @@ interface TaskListContentProps {
   isLoading: boolean;
   error: string | null;
   onTaskClick?: (taskId: string) => void;
+  sentinelRef?: React.RefObject<HTMLDivElement | null> | null;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
 export function TaskListContent({
@@ -15,10 +18,13 @@ export function TaskListContent({
   isLoading,
   error,
   onTaskClick,
+  sentinelRef,
+  hasMore,
+  isLoadingMore,
 }: TaskListContentProps) {
   return (
-    <div className="flex-1 flex flex-col gap-3 pb-2">
-      {isLoading && (
+    <div className="flex-1 flex flex-col gap-3 pb-2 h-full overflow-auto">
+      {isLoading && tasks.length === 0 && (
         <div className="flex justify-center items-center py-10">
           <div className="w-5 h-5 border-2 border-[#D7E2FF] border-t-[#0052CC] rounded-full animate-spin" />
         </div>
@@ -33,11 +39,19 @@ export function TaskListContent({
           No tasks yet
         </div>
       )}
-      {!isLoading &&
-        !error &&
-        tasks.map((task) => (
-          <TaskCard key={task.id} task={task} onTaskClick={onTaskClick} />
-        ))}
+      {tasks.length > 0 && (
+        <>
+          {tasks.map((task) => (
+            <TaskCard key={task.id} task={task} onTaskClick={onTaskClick} />
+          ))}
+          {hasMore && <div ref={sentinelRef} className="h-1" />}
+          {isLoadingMore && (
+            <div className="flex justify-center py-4">
+              <div className="w-5 h-5 border-2 border-[#D7E2FF] border-t-[#0052CC] rounded-full animate-spin" />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ export function useInfiniteScroll(
   isLoading: boolean,
   hasMore: boolean,
   onLoadMore: () => void,
+  rootMargin: string = "0px 0px 150px 0px",
 ) {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -22,11 +23,11 @@ export function useInfiniteScroll(
     if (!node) return;
     const observer = new IntersectionObserver(handleObserver, {
       root: null,
-      rootMargin: "0px",
+      rootMargin,
       threshold: 0.1,
     });
     observer.observe(node);
     return () => observer.disconnect();
-  }, [handleObserver]);
+  }, [handleObserver, rootMargin]);
   return { sentinelRef };
 }

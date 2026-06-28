@@ -5,6 +5,7 @@ import { TaskTableHeader } from "./TaskTableHeader";
 import { TaskTableRow } from "./TaskTableRow";
 import { TaskTableFooter } from "./TaskTableFooter";
 import { Task } from "@/features/tasks/types/task.types";
+import { Pagination } from "@/components/Pagination";
 
 interface ProjectTasksListProps {
   projectId: string;
@@ -15,7 +16,15 @@ export function ProjectTasksList({
   projectId,
   onTaskClick,
 }: ProjectTasksListProps) {
-  const { tasks, isLoading, error } = useProjectTasks(projectId);
+  const {
+    tasks,
+    isLoading,
+    error,
+    currentPage,
+    totalPages,
+    setPage,
+    totalCount,
+  } = useProjectTasks(projectId, "paginate");
 
   return (
     <div className="w-full bg-white rounded-xl border border-[#E8EDFF] shadow-sm overflow-hidden">
@@ -57,7 +66,13 @@ export function ProjectTasksList({
           </tbody>
         </table>
       </div>
-      <TaskTableFooter total={tasks.length > 0 ? 24 : 0} shown={tasks.length} />
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }
