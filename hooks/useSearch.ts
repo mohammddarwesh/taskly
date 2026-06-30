@@ -35,7 +35,6 @@ export function useSearch(options: UseSearchOptions = {}): UseSearchReturn {
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
   const isInternalUpdate = useRef(false);
 
-  // Sync input when URL changes (back/forward)
   useEffect(() => {
     if (!isInternalUpdate.current) {
       setInputValue(searchFromUrl);

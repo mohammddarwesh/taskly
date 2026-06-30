@@ -24,7 +24,7 @@ interface UsePaginationReturn<T> {
   setPage: (page: number) => void;
   nextPage: () => void;
   prevPage: () => void;
-  fetchPage: (page: number) => Promise<void>;
+  fetchPage: (page: number, options?: { reset?: boolean }) => Promise<void>;
 }
 
 export function usePagination<T>({
@@ -41,7 +41,8 @@ export function usePagination<T>({
   const totalPages = Math.ceil(totalCount / pageSize);
 
   const fetchPage = useCallback(
-    async (page: number) => {
+    async (page: number, options?: { reset?: boolean }) => {
+      const { reset = false } = options || {};
       setCurrentPage(page);
       setIsLoading(true);
       setError(null);
@@ -49,11 +50,17 @@ export function usePagination<T>({
         const offset = (page - 1) * pageSize;
         const { data: newData, total } = await fetcher(pageSize, offset);
         setTotalCount(total);
-        setData((prev) =>
-          mode === "append" ? [...prev, ...newData] : newData,
-        );
+        if (mode === "append" && !reset) {
+          setData((prev) => [...prev, ...newData]);
+        } else {
+          setData(newData);
+        }
       } catch (err) {
-        setError(isApiError(err) ? err.msg : "An unexpected error occurred");
+        if (isApiError(err)) {
+          setError(err?.msg || "Failed to fetch data");
+        } else {
+          setError("An unexpected error occurred");
+        }
       } finally {
         setIsLoading(false);
       }
