@@ -12,27 +12,31 @@ interface TaskColumnProps {
   projectId: string;
   status: TaskStatusType;
   onTaskClick?: (taskId: string) => void;
+  search?: string;
 }
 
 export function TaskColumn({
   projectId,
   status,
   onTaskClick,
+  search,
 }: TaskColumnProps) {
   const router = useRouter();
   const config = statusConfig[status] || statusConfig.TO_DO;
-  const { tasks, isLoading, error, sentinelRef, hasMore } = useProjectTasks(
+  const { tasks, isLoading, error, sentinelRef, hasMore } = useProjectTasks({
     projectId,
-    "infinite",
+    mode: "infinite",
     status,
-  );
+    pageSize: 20,
+    search,
+  });
 
   const handleAddTask = () => {
     router.push(`/project/${projectId}/tasks/new?status=${status}`);
   };
 
   return (
-    <div className="flex flex-col min-w-[288px]  w-full h-full bg-[#F9F9FF] border border-[#E8EDFF] rounded-xl p-4 min-h-[300px]">
+    <div className="flex flex-col min-w-[288px] w-full h-full bg-[#F9F9FF] border border-[#E8EDFF] rounded-xl p-4 min-h-[300px]">
       <ColumnHeader
         status={status}
         count={tasks.length}

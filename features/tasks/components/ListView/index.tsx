@@ -3,28 +3,33 @@
 import { useProjectTasks } from "@/features/tasks/hooks/useProjectTasks";
 import { TaskTableHeader } from "./TaskTableHeader";
 import { TaskTableRow } from "./TaskTableRow";
-import { TaskTableFooter } from "./TaskTableFooter";
-import { Task } from "@/features/tasks/types/task.types";
 import { Pagination } from "@/components/Pagination";
 
 interface ProjectTasksListProps {
   projectId: string;
   onTaskClick?: (taskId: string) => void;
+  search?: string;
 }
 
 export function ProjectTasksList({
   projectId,
   onTaskClick,
+  search,
 }: ProjectTasksListProps) {
   const {
     tasks,
-    isLoading,
-    error,
     currentPage,
     totalPages,
     setPage,
     totalCount,
-  } = useProjectTasks(projectId, "paginate");
+    isLoading,
+    error,
+  } = useProjectTasks({
+    projectId,
+    mode: "paginate",
+    pageSize: 20,
+    search,
+  });
 
   return (
     <div className="w-full bg-white rounded-xl border border-[#E8EDFF] shadow-sm overflow-hidden">
@@ -50,7 +55,9 @@ export function ProjectTasksList({
             {!isLoading && !error && tasks.length === 0 && (
               <tr>
                 <td colSpan={6} className="py-10 text-center text-[#737685]">
-                  No tasks found.
+                  {search
+                    ? "No tasks found matching your search"
+                    : "No tasks found for this project."}
                 </td>
               </tr>
             )}

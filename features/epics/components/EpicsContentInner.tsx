@@ -30,7 +30,6 @@ export function EpicsContentInner({ projectId }: EpicsContentInnerProps) {
     error,
     setPage,
     sentinelRef,
-    isMobile,
     isEmpty,
     isInitialLoading,
     showPagination,
@@ -84,8 +83,8 @@ export function EpicsContentInner({ projectId }: EpicsContentInnerProps) {
 
       <div className="flex items-center justify-between mb-6">
         <span className="text-sm font-medium text-[#434654]">
-          {!isMobile && `Showing ${epics.length} of ${totalCount} epics`}
-          {isMobile && `${totalCount} epics`}
+          { `Showing ${epics.length} of ${totalCount} epics`}
+          {/* {isMobile && `${totalCount} epics`} */}
         </span>
       </div>
 
