@@ -23,7 +23,6 @@ export async function createEpic(
   });
 }
 
-// ✅ Fixed: This function now returns paginated data with total count
 export async function getProjectEpics(
   projectId: string,
 ): Promise<{ data: Epic[]; total: number }> {

@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+"use client";
+
+import { useSearch } from "@/hooks/useSearch";
 import Head from "@/components/ui/Head";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
@@ -7,40 +9,15 @@ import Input from "@/components/ui/Input";
 
 interface EpicHeaderProps {
   projectId: string;
-  searchValue: string; // from URL
-  onSearchChange: (value: string) => void; // updates URL (debounced)
 }
 
-export function EpicHeader({
-  projectId,
-  searchValue,
-  onSearchChange,
-}: EpicHeaderProps) {
-  const [inputValue, setInputValue] = useState(searchValue);
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
-  const isInternalUpdate = useRef(false);
-
-  // Sync input when URL changes (back/forward)
-  useEffect(() => {
-    if (!isInternalUpdate.current) {
-      setInputValue(searchValue);
-    }
-    isInternalUpdate.current = false;
-  }, [searchValue]);
-
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const val = e.target.value;
-      setInputValue(val);
-      isInternalUpdate.current = true;
-
-      if (debounceTimer.current) clearTimeout(debounceTimer.current);
-      debounceTimer.current = setTimeout(() => {
-        onSearchChange(val);
-      }, 400);
-    },
-    [onSearchChange],
-  );
+export function EpicHeader({ projectId }: EpicHeaderProps) {
+  const { inputValue, setSearch, isDebouncing } = useSearch({
+    searchParamKey: "search",
+    debounceDelay: 400,
+    resetPageOnSearch: true,
+    pageParamKey: "page",
+  });
 
   return (
     <div className="md:flex w-full justify-between items-center gap-8 mb-8 md:pt-8">
@@ -58,11 +35,17 @@ export function EpicHeader({
           <Input
             id="search"
             label=""
+            autoFocus
             placeholder="Search epics..."
             value={inputValue}
-            onChange={handleInputChange}
+            onChange={(e) => setSearch(e.target.value)}
             className="bg-transparent border-none! focus:outline-none! focus:ring-0! focus:border-transparent! pl-3 h-full text-sm placeholder:text-[#737685]"
           />
+          {isDebouncing && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <div className="w-4 h-4 border-2 border-[#0052CC] border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
         </div>
         <Link
           href={`/project/${projectId}/epics/new`}
