@@ -27,7 +27,9 @@ interface GetTasksParams {
   id?: string | null;
   limit?: number;
   offset?: number;
+  search?: string;
 }
+
 export async function getProjectTasks({
   projectId,
   status,
@@ -35,6 +37,7 @@ export async function getProjectTasks({
   id,
   limit,
   offset,
+  search,
 }: GetTasksParams): Promise<{ data: Task[]; total: number }> {
   let url = `/api/projects/${projectId}/tasks`;
   const params = new URLSearchParams();
@@ -43,6 +46,7 @@ export async function getProjectTasks({
   if (id) params.append("id", id);
   if (limit !== undefined) params.append("limit", limit.toString());
   if (offset !== undefined) params.append("offset", offset.toString());
+  if (search) params.append("search", search);
   if (params.toString()) {
     url += `?${params.toString()}`;
   }

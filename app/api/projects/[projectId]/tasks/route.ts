@@ -23,6 +23,7 @@ export async function GET(
     const taskId = searchParams.get("id");
     const limit = searchParams.get("limit");
     const offset = searchParams.get("offset");
+    const search = searchParams.get("search");
 
     const url = new URL(`${backendURL}/rest/v1/project_tasks`);
     url.searchParams.set("project_id", `eq.${projectId}`);
@@ -42,7 +43,9 @@ export async function GET(
     if (offset) {
       url.searchParams.set("offset", offset);
     }
-
+    if (search) {
+      url.searchParams.set("title", `ilike.%${encodeURIComponent(search)}%`);
+    }
     const res = await fetch(url, {
       headers: {
         apikey: api_key!,
