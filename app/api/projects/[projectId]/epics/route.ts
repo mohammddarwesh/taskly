@@ -88,6 +88,8 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const limit = searchParams.get("limit");
     const offset = parseInt(searchParams.get("offset") || "0", 10);
+    const search = searchParams.get("search");
+
     const url = new URL(`${backendURL}/rest/v1/project_epics`);
     url.searchParams.set("project_id", `eq.${projectId}`);
     url.searchParams.set("offset", offset.toString());
@@ -95,7 +97,12 @@ export async function GET(
     if (limit) {
       url.searchParams.set("limit", limit.toString());
     }
-
+    if (search && search.trim()) {
+      url.searchParams.set(
+        "title",
+        `ilike.%${encodeURIComponent(search.trim())}%`,
+      );
+    }
     const res = await fetch(url, {
       headers: {
         apikey: api_key!,

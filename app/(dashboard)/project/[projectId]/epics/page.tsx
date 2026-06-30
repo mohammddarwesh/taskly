@@ -1,5 +1,4 @@
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { EpicHeader } from "@/features/epics/components/EpicHeader";
 import FloatingPlusBtn from "@/components/ui/FloatingPlusBtn";
 import { EpicsContent } from "@/features/epics/components/EpicsContent";
 
@@ -16,7 +15,6 @@ export default async function ProjectEpicsPage({ params }: PageProps) {
         <div className="hidden md:block">
           <Breadcrumbs />
         </div>
-        <EpicHeader projectId={projectId} />
         <EpicsContent projectId={projectId} />
         <FloatingPlusBtn href={`/project/${projectId}/epics/new`} />
       </div>
