@@ -1,6 +1,6 @@
 import { apiClient } from "@/libs/api-client";
 import { CreateTaskFormValues } from "../schemas/task.schema";
-import { Task } from "../types/task.types";
+import { Task, TaskStatusType } from "../types/task.types";
 
 export async function createTask(
   projectId: string,
@@ -62,4 +62,15 @@ export async function getTaskById(
     return res.data[0];
   }
   throw new Error("Task not found");
+}
+
+export async function updateTaskStatus(
+  taskId: string,
+  projectId: string,
+  status: TaskStatusType,
+): Promise<void> {
+  await apiClient(`/api/projects/${projectId}/tasks/${taskId}`, {
+    method: "PATCH",
+    body: { status },
+  });
 }
