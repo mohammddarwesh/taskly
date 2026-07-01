@@ -1,5 +1,6 @@
 "use client";
 
+import { useDraggable } from "@dnd-kit/react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Task } from "../../types/task.types";
 import { statusConfig } from "../../utils/statusConfig";
@@ -31,12 +32,19 @@ export function TaskCard({ task, onTaskClick }: TaskCardProps) {
   const formattedDate = formatCardDate(task.due_date);
   const assigneeName = task.assignee?.name || undefined;
 
+  const { ref, isDragging } = useDraggable({
+    id: task.id,
+    data: { task },
+  });
+
   return (
     <div
+      ref={ref}
       onClick={() => onTaskClick?.(task.id)}
       className={cn(
-        "flex flex-col gap-3 p-4 bg-[#FFFFFF] rounded-lg border border-[#E8EDFF] border-l-4 transition-shadow hover:shadow-sm cursor-pointer",
+        "flex flex-col gap-3 p-4 bg-[#FFFFFF] rounded-lg border border-[#E8EDFF] border-l-4 transition-shadow hover:shadow-sm cursor-pointer touch-none",
         config.borderColor,
+        isDragging && "shadow-lg opacity-50",
       )}
     >
       <p className="text-[15px] font-medium text-[#041B3C] leading-5.5 line-clamp-2">
