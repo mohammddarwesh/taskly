@@ -13,10 +13,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { ApiError } from "@/types/apiError.types";
-import {
-  getAuthLink,
-  getRedirectUrl,
-} from "@/libs/redirect-utils";
+import { getAuthLink, getRedirectUrl } from "@/libs/redirect-utils";
 import { useAppDispatch } from "@/store/hooks";
 import { loginThunk } from "../store/auth.thunks";
 
