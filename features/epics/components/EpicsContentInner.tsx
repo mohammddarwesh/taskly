@@ -65,9 +65,9 @@ export function EpicsContentInner({ projectId }: EpicsContentInnerProps) {
   if (isEmpty) {
     return (
       <div className="text-center  text-[#434654]">
+        <EpicHeader projectId={projectId} />
         {search ? (
           <>
-            <EpicHeader projectId={projectId} />
             <p>No epics found matching your search</p>
           </>
         ) : (
@@ -83,7 +83,7 @@ export function EpicsContentInner({ projectId }: EpicsContentInnerProps) {
 
       <div className="flex items-center justify-between mb-6">
         <span className="text-sm font-medium text-[#434654]">
-          { `Showing ${epics.length} of ${totalCount} epics`}
+          {`Showing ${epics.length} of ${totalCount} epics`}
           {/* {isMobile && `${totalCount} epics`} */}
         </span>
       </div>
