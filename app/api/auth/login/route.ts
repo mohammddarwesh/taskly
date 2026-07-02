@@ -5,10 +5,24 @@ import { SupaBaseAuthResponse } from "@/types";
 import { ApiError } from "@/types/apiError.types";
 import { NextResponse } from "next/server";
 
+function isApiError(e: unknown): e is ApiError {
+    return typeof e === "object" && e !== null && "msg" in e;
+}
+
+function resolveStatus(error: ApiError): number {
+    if (typeof error.status === "number" && error.status >= 400 && error.status < 600) {
+        return error.status;
+    }
+    return 500;
+}
+
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        console.log("Login Body", body);
+
+        if (process.env.NODE_ENV !== "production") {
+            console.log("Login Body", { ...body, password: "[redacted]" });
+        }
 
         const data = await apiClient<SupaBaseAuthResponse>(
             `${backendURL}/auth/v1/token?grant_type=password`,
@@ -18,26 +32,31 @@ export async function POST(request: Request) {
                     apikey: api_key,
                 },
                 body,
-            },
+            }
         );
         const response = NextResponse.json({
             success: true,
             user: data.user,
         });
         setTokenCookies(response, data, body.rememberMe);
-        return response
+        return response;
     } catch (error) {
         console.error("LOGIN_ERROR", error);
-        const { msg, code, error_code } = error as ApiError
+
+        if (!isApiError(error)) {
+            return NextResponse.json(
+                { success: false, msg: "Internal server error", code: "SERVER_ERROR" },
+                { status: 500 }
+            );
+        }
+
         return NextResponse.json(
             {
                 success: false,
-                msg: msg || "Internal server error",
-                code: code || "SERVER_ERROR",
+                msg: error.msg || "Internal server error",
+                code: error.error_code || "SERVER_ERROR",
             },
-            {
-                status: +error_code || 500,
-            },
+            { status: resolveStatus(error) }
         );
     }
 }
