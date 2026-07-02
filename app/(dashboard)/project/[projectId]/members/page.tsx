@@ -1,15 +1,22 @@
+"use client";
+
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import Head from "@/components/ui/Head";
 import Button from "@/components/ui/Button";
 import { MembersContent } from "@/features/projects/components/MembersContent";
+import { InviteMemberModal } from "@/features/invite/components/InviteMemberModal";
 import Image from "next/image";
 
-interface PageProps {
-  params: Promise<{ projectId: string }>;
-}
+export default function ProjectMembersPage() {
+  const params = useParams();
+  const projectId = params.projectId as string;
+  const router = useRouter();
+  const pathname = usePathname();
 
-export default async function ProjectMembersPage({ params }: PageProps) {
-  const { projectId } = await params;
+  const handleInviteClick = () => {
+    router.push(`${pathname}?invite=true`);
+  };
 
   return (
     <div className="bg-background">
@@ -22,7 +29,7 @@ export default async function ProjectMembersPage({ params }: PageProps) {
             className="pt-4 pb-0"
             headClassName="text-[36px] leading-10 tracking-[-0.9px]"
           />
-          <Button className="py-3">
+          <Button className="py-3" onClick={handleInviteClick}>
             <Image
               src="/icons/addMember.svg"
               alt="Invite Member"
@@ -35,6 +42,8 @@ export default async function ProjectMembersPage({ params }: PageProps) {
         </div>
 
         <MembersContent projectId={projectId} />
+
+        <InviteMemberModal projectId={projectId} />
       </div>
     </div>
   );
