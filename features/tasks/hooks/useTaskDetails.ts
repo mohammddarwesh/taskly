@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { getTaskById } from "@/features/tasks/services/task.service";
 import { Task } from "@/features/tasks/types/task.types";
@@ -14,34 +12,25 @@ export function useTaskDetails(projectId: string, taskId: string | null) {
     if (!projectId || !taskId) return;
 
     let isMounted = true;
-
     const fetchTask = async () => {
       setIsLoading(true);
       setError(null);
       try {
         const data = await getTaskById(projectId, taskId);
-        if (isMounted) {
-          setTask(data);
-        }
+        if (isMounted) setTask(data);
       } catch (err) {
         if (isMounted) {
-          const message = isApiError(err) ? err.msg : "Failed to load task details";
-          setError(message);
+          setError(isApiError(err) ? err.msg : "Failed to load task details");
           setTask(null);
         }
       } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        if (isMounted) setIsLoading(false);
       }
     };
 
     fetchTask();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, [projectId, taskId]);
 
-  return { task, isLoading, error };
+  return { task, isLoading, error, setTask };
 }
