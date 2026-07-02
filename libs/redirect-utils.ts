@@ -1,27 +1,21 @@
 export function isSafeRedirect(url: string): boolean {
-    if (!url || typeof url !== "string") return false;
-
-    let decoded: string;
-    try {
-        decoded = decodeURIComponent(url);
-    } catch {
+    if (url.includes("://") || url.startsWith("//")) {
         return false;
     }
 
-    if (!decoded.startsWith("/")) return false;
-    if (decoded.startsWith("//")) return false;
-    if (/^[a-z][a-z0-9+.-]*:/i.test(decoded)) return false;
-    if (decoded.includes("\\")) return false;
-    if (decoded.includes("..")) return false;
-    if (/[\x00-\x1f\s]/.test(decoded)) return false;
+    if (/^(javascript|data|file):/i.test(url)) {
+        return false;
+    }
+
+    if (url.includes("..") || url.includes("\\")) {
+        return false;
+    }
+
+    if (!url.startsWith("/")) {
+        return false;
+    }
 
     return true;
-}
-
-export function saveRedirect(redirect: string): void {
-    if (typeof window === "undefined") return;
-    if (!isSafeRedirect(redirect)) return;
-    sessionStorage.setItem("redirectAfterAuth", redirect);
 }
 
 export function getRedirectUrl(searchParams: URLSearchParams): string {
@@ -32,9 +26,8 @@ export function getRedirectUrl(searchParams: URLSearchParams): string {
             sessionStorage.setItem("redirectAfterAuth", redirectParam);
         }
         return redirectParam;
-    }
 
-    if (typeof window === "undefined") return "/";
+    }
 
     const savedRedirect = sessionStorage.getItem("redirectAfterAuth");
     if (savedRedirect && isSafeRedirect(savedRedirect)) {
@@ -45,14 +38,10 @@ export function getRedirectUrl(searchParams: URLSearchParams): string {
 }
 
 export function clearRedirect(): void {
-    if (typeof window === "undefined") return;
     sessionStorage.removeItem("redirectAfterAuth");
 }
 
-export function getAuthLink(
-    path: string,
-    currentRedirect: string
-): { pathname: string; query?: { redirect: string } } {
+export function getAuthLink(path: string, currentRedirect: string): { pathname: string; query?: { redirect: string } } {
     const safeRedirect = isSafeRedirect(currentRedirect) ? currentRedirect : "/";
     return {
         pathname: path,

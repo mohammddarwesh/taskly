@@ -1,6 +1,7 @@
+// app/api/auth/refresh/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { apiClient } from '@/libs/api-client';
-import { setTokenCookies, getRememberMeCookie } from '@/libs/cookies';
+import { setTokenCookies } from '@/libs/cookies';
 import { api_key, backendURL, refreshTokenStr } from '@/constants';
 
 export async function POST(request: NextRequest) {
@@ -10,7 +11,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
   }
 
-  const rememberMe = getRememberMeCookie(request);
 
   try {
     const data = await apiClient<{
@@ -25,18 +25,11 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json({ success: true });
 
-    setTokenCookies(response, data, rememberMe);
+    setTokenCookies(response, data, false);
 
     return response;
   } catch (error) {
     console.error('Refresh error:', error);
-
-    const status = (error as { status?: number })?.status;
-    const isAuthRejection = status === 400 || status === 401;
-
-    return NextResponse.json(
-      { error: isAuthRejection ? 'Refresh failed' : 'Refresh unavailable' },
-      { status: isAuthRejection ? 401 : 503 }
-    );
+    return NextResponse.json({ error: 'Refresh failed' }, { status: 401 });
   }
 }
