@@ -1,9 +1,36 @@
-// TaskDetailsHeader.tsx
 "use client";
 
+import { useState } from "react";
+import { toast } from "react-toastify";
 import { Task } from "@/features/tasks/types/task.types";
+import { EditableField } from "@/components/ui/EditableField";
+import { useUpdateTask } from "../../hooks/useUpdateTask";
 
-export function TaskDetailsHeader({ task }: { task: Task }) {
+interface TaskDetailsHeaderProps {
+  task: Task;
+  projectId: string;
+  setTask: (task: Task) => void;
+}
+
+export function TaskDetailsHeader({
+  task,
+  projectId,
+  setTask,
+}: TaskDetailsHeaderProps) {
+  const { updateField, isUpdating } = useUpdateTask(projectId, task, setTask);
+  const [isTitleEditing, setIsTitleEditing] = useState(false);
+  const [titleValue, setTitleValue] = useState(task.title);
+
+  const handleTitleSave = async () => {
+    const trimmed = titleValue.trim();
+    if (!trimmed) {
+      toast.error("Title is required");
+      return;
+    }
+    await updateField("title", trimmed);
+    setIsTitleEditing(false);
+  };
+
   const epicLabel = task.epic
     ? `${task.epic.epic_id} (${task.epic.title})`
     : "No epic";
@@ -34,9 +61,44 @@ export function TaskDetailsHeader({ task }: { task: Task }) {
           </span>
         )}
       </div>
-      <h2 className="text-[28px] md:text-[32px] font-bold text-[#041B3C] leading-[1.15]">
-        {task.title}
-      </h2>
+
+      <EditableField
+        label="Title"
+        isEditing={isTitleEditing}
+        disabled={isUpdating}
+        display={
+          <h2 className="text-[28px] md:text-[32px] font-bold text-[#041B3C] leading-[1.15]">
+            {task.title}
+          </h2>
+        }
+        editor={
+          <input
+            type="text"
+            value={titleValue}
+            onChange={(e) => setTitleValue(e.target.value)}
+            onBlur={handleTitleSave}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleTitleSave();
+              }
+            }}
+            className="w-full bg-[#D7E2FF] rounded-sm px-4 py-2 text-[28px] md:text-[32px] font-bold text-[#041B3C] border-0 focus:outline-none focus:ring-1 focus:ring-blue-600"
+            autoFocus
+            placeholder="Enter task title..."
+            disabled={isUpdating}
+          />
+        }
+        onStartEdit={() => {
+          setTitleValue(task.title);
+          setIsTitleEditing(true);
+        }}
+        onCancel={() => {
+          setTitleValue(task.title);
+          setIsTitleEditing(false);
+        }}
+        className="w-full"
+      />
     </div>
   );
 }
