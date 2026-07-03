@@ -1,8 +1,10 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import { Avatar } from "@/components/ui/Avatar";
 import { MetaField } from "@/components/ui/MetaField";
 import { Select } from "@/components/ui/Select";
+import Input from "@/components/ui/Input";
 import { formatDate } from "@/libs/utils";
 import { useProjectEpics } from "@/features/epics/hooks/useProjectEpics";
 import { useProjectMembers } from "@/features/projects/hooks/useProjectMembers";
@@ -46,70 +48,81 @@ export function TaskDetailsSidebar({
     department: null,
   });
 
-  const memberOptions = [
-    { value: "", label: "Unassigned" },
-    ...members.map((member) => ({
-      value: member.id,
-      label: member.name || member.email || "Unknown",
-    })),
-  ];
+  const memberOptions = useMemo(
+    () => [
+      { value: "", label: "Unassigned" },
+      ...members.map((member) => ({
+        value: member.id,
+        label: member.name || member.email || "Unknown",
+      })),
+    ],
+    [members],
+  );
 
-  const epicOptions = [
-    { value: "", label: "No epic" },
-    ...epics.map((epic) => ({
-      value: epic.id,
-      label: `${epic.epic_id} ${
-        epic.title.length > 80 ? `${epic.title.slice(0, 77)}...` : epic.title
-      }`,
-    })),
-  ];
+  const epicOptions = useMemo(
+    () => [
+      { value: "", label: "No epic" },
+      ...epics.map((epic) => ({
+        value: epic.id,
+        label: `${epic.epic_id} ${
+          epic.title.length > 80 ? `${epic.title.slice(0, 77)}...` : epic.title
+        }`,
+      })),
+    ],
+    [epics],
+  );
 
-  const epicValue =
-    task.epic && epics.some((epic) => epic.id === task.epic?.id)
-      ? task.epic.id
-      : "";
+  const epicValue = useMemo(
+    () =>
+      task.epic && epics.some((epic) => epic.id === task.epic?.id)
+        ? task.epic.id
+        : "",
+    [task.epic, epics],
+  );
 
-  const handleStatusChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    await updateField("status", e.target.value as TaskStatusType);
-  };
+  const handleStatusChange = useCallback(
+    async (e: React.ChangeEvent<HTMLSelectElement>) => {
+      await updateField("status", e.target.value as TaskStatusType);
+    },
+    [updateField],
+  );
 
-  const handleAssigneeChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    const userId = e.target.value;
+  const handleAssigneeChange = useCallback(
+    async (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const userId = e.target.value;
+      if (!userId) {
+        await updateField("assignee", null);
+        return;
+      }
+      const member = members.find((m) => m.id === userId);
+      if (member) {
+        await updateField("assignee", mapMemberToUserInfo(member));
+      }
+    },
+    [updateField, members],
+  );
 
-    if (!userId) {
-      await updateField("assignee", null);
-      return;
-    }
+  const handleEpicChange = useCallback(
+    async (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const epicId = e.target.value;
+      if (!epicId) {
+        await updateField("epic", null);
+        return;
+      }
+      const epic = epics.find((item) => item.id === epicId);
+      if (epic) {
+        await updateField("epic", epic);
+      }
+    },
+    [updateField, epics],
+  );
 
-    const member = members.find((m) => m.id === userId);
-    if (member) {
-      await updateField("assignee", mapMemberToUserInfo(member));
-    }
-  };
-
-  const handleEpicChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const epicId = e.target.value;
-
-    if (!epicId) {
-      await updateField("epic", null);
-      return;
-    }
-
-    const epic = epics.find((item) => item.id === epicId);
-    if (epic) {
-      await updateField("epic", epic);
-    }
-  };
-
-  const handleDueDateChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    await updateField("due_date", e.target.value || null);
-  };
+  const handleDueDateChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      await updateField("due_date", e.target.value || null);
+    },
+    [updateField],
+  );
 
   return (
     <div className="space-y-8">
@@ -178,12 +191,13 @@ export function TaskDetailsSidebar({
       </MetaField>
 
       <MetaField label="Due Date">
-        <input
+        <Input
+          id="due-date"
           type="datetime-local"
           value={task.due_date || ""}
           onChange={handleDueDateChange}
           disabled={isUpdating}
-          className="w-full rounded-sm border-0 bg-[#D7E2FF] px-4 py-2 text-[16px] text-[#041B3C] focus:outline-none focus:ring-1 focus:ring-blue-600"
+          className="w-full"
         />
         <div className="mt-1 text-[14px] text-[#434654]">{dueDate}</div>
       </MetaField>

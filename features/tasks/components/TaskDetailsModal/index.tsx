@@ -33,53 +33,62 @@ export function TaskDetailsModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      closeOnOverlayClick={true}
+      closeOnOverlayClick
       hideHeader
-      className="max-w-6xl h-[90vh] p-0 overflow-hidden rounded-xl bg-white"
+      className="w-[min(1120px,calc(100vw-32px))] overflow-auto rounded-[20px] bg-white p-0 shadow-[0_24px_80px_rgba(15,23,42,0.18)]"
     >
       {isLoading && <TaskDetailsSkeleton />}
+
       {error && (
-        <div className="flex items-center justify-center h-full text-red-500 font-medium p-8">
+        <div className="flex h-full items-center justify-center p-8 text-sm font-medium text-red-500">
           {error}
         </div>
       )}
+
       {!isLoading && !error && !task && (
-        <div className="flex items-center justify-center h-full text-[#434654] p-8">
+        <div className="flex h-full items-center justify-center p-8 text-sm text-[#434654]">
           Task not found
         </div>
       )}
 
       {!isLoading && task && (
-        <div className="flex flex-col md:flex-row h-full w-full min-h-0">
-          <div className="flex-1 flex flex-col bg-white h-full min-h-0">
-            <div className="px-8 py-6 border-b border-[#E8EDFF] shrink-0">
+        <div className="flex h-full min-h-0 w-full flex-col md:flex-row">
+          {/* Left content */}
+          <section className="flex min-h-0 flex-1 flex-col bg-white">
+            <div className="shrink-0 border-b border-[#E7ECF8] px-8 pt-8 pb-6">
               <TaskDetailsHeader
                 task={task}
                 projectId={projectId}
                 setTask={setTask}
               />
             </div>
-            <div className="px-8 py-6 flex-1 bg-white overflow-y-auto">
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-8 py-7">
               <TaskDetailsBody
                 task={task}
                 projectId={projectId}
                 setTask={setTask}
               />
             </div>
-            <div className="shrink-0 bg-[#F4F6FF] border-t border-[#E8EDFF]">
+
+            <div className="hidden md:block shrink-0 border-t border-[#E7ECF8] bg-[#F7F9FF]">
               <TaskDetailsFooter
                 onClose={onClose}
                 onCopyLink={handleCopyLink}
               />
             </div>
-          </div>
-          <div className="w-full md:w-[320px] h-full flex-shrink-0 bg-[#F4F6FF] border-t md:border-t-0 md:border-l border-[#E8EDFF] overflow-y-auto p-8 flex flex-col gap-6">
-            <TaskDetailsSidebar
-              task={task}
-              projectId={projectId}
-              setTask={setTask}
-            />
-          </div>
+          </section>
+
+          {/* Right sidebar */}
+          <aside className="w-full shrink-0 border-t border-[#E7ECF8] bg-[#F7F9FF] md:w-[320px] md:border-l md:border-t-0">
+            <div className="h-full overflow-y-auto px-8 py-8">
+              <TaskDetailsSidebar
+                task={task}
+                projectId={projectId}
+                setTask={setTask}
+              />
+            </div>
+          </aside>
         </div>
       )}
     </Modal>

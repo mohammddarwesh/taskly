@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { toast } from "react-toastify";
 import { Task } from "@/features/tasks/types/task.types";
-import { EditableField } from "@/components/ui/EditableField";
+import { EditableText } from "@/components/ui/EditableText";
 import { useUpdateTask } from "../../hooks/useUpdateTask";
 
 interface TaskDetailsHeaderProps {
@@ -18,17 +17,13 @@ export function TaskDetailsHeader({
   setTask,
 }: TaskDetailsHeaderProps) {
   const { updateField, isUpdating } = useUpdateTask(projectId, task, setTask);
-  const [isTitleEditing, setIsTitleEditing] = useState(false);
-  const [titleValue, setTitleValue] = useState(task.title);
 
-  const handleTitleSave = async () => {
-    const trimmed = titleValue.trim();
-    if (!trimmed) {
+  const handleTitleSave = async (val: string | null) => {
+    if (!val) {
       toast.error("Title is required");
       return;
     }
-    await updateField("title", trimmed);
-    setIsTitleEditing(false);
+    await updateField("title", val);
   };
 
   const epicLabel = task.epic
@@ -62,41 +57,18 @@ export function TaskDetailsHeader({
         )}
       </div>
 
-      <EditableField
+      <EditableText
         label="Title"
-        isEditing={isTitleEditing}
-        disabled={isUpdating}
+        value={task.title}
+        onSave={handleTitleSave}
         display={
           <h2 className="text-[28px] md:text-[32px] font-bold text-[#041B3C] leading-[1.15]">
             {task.title}
           </h2>
         }
-        editor={
-          <input
-            type="text"
-            value={titleValue}
-            onChange={(e) => setTitleValue(e.target.value)}
-            onBlur={handleTitleSave}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleTitleSave();
-              }
-            }}
-            className="w-full bg-[#D7E2FF] rounded-sm px-4 py-2 text-[28px] md:text-[32px] font-bold text-[#041B3C] border-0 focus:outline-none focus:ring-1 focus:ring-blue-600"
-            autoFocus
-            placeholder="Enter task title..."
-            disabled={isUpdating}
-          />
-        }
-        onStartEdit={() => {
-          setTitleValue(task.title);
-          setIsTitleEditing(true);
-        }}
-        onCancel={() => {
-          setTitleValue(task.title);
-          setIsTitleEditing(false);
-        }}
+        editorType="input"
+        placeholder="Enter task title..."
+        disabled={isUpdating}
         className="w-full"
       />
     </div>
