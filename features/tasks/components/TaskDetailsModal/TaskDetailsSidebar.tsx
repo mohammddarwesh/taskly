@@ -23,6 +23,19 @@ interface TaskDetailsSidebarProps {
   setTask: (task: Task) => void;
 }
 
+// Helper to format date for <input type="datetime-local">
+function formatDateForInput(date: string | null): string {
+  if (!date) return "";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 export function TaskDetailsSidebar({
   task,
   projectId,
@@ -38,7 +51,7 @@ export function TaskDetailsSidebar({
   const assigneeName = task.assignee?.name || "Unassigned";
   const assigneeDepartment = task.assignee?.department || "Team Member";
   const reporterName = task.created_by?.name || "Unknown";
-  const dueDate = task.due_date ? formatDate(task.due_date) : "No due date";
+  const dueDate = formatDate(task.due_date);
   const createdAt = formatDate(task.created_at);
 
   const mapMemberToUserInfo = (member: ProjectMember): UserInfo => ({
@@ -194,7 +207,7 @@ export function TaskDetailsSidebar({
         <Input
           id="due-date"
           type="datetime-local"
-          value={task.due_date || ""}
+          value={formatDateForInput(task.due_date)}
           onChange={handleDueDateChange}
           disabled={isUpdating}
           className="w-full"
