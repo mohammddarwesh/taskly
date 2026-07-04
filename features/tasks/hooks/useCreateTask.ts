@@ -1,23 +1,25 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { isApiError } from "@/types/apiError.types";
 import { createTaskSchema, CreateTaskFormValues } from "../schemas/task.schema";
 import { TaskStatus, TaskStatusType } from "../types/task.types";
 import { createTask } from "../services/task.service";
+import { taskKeys } from "./taskQueries";
 
 export function useCreateTask(
   projectId: string,
   initialEpicId?: string | null,
 ) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
   const initialStatus =
     (searchParams.get("status") as TaskStatusType) || TaskStatus.TO_DO;
 
@@ -32,27 +34,30 @@ export function useCreateTask(
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: (values: CreateTaskFormValues) => createTask(projectId, values),
+    onSuccess: () => {
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: taskKeys.all(projectId) });
+      router.push(`/project/${projectId}`);
+      toast.success("Task created successfully");
+    },
+    onError: (err: unknown) => {
+      const message = isApiError(err) ? err.msg : "Something went wrong";
+      toast.error(`Failed to create task: ${message}`);
+    }
+  });
+
   const onSubmit = useCallback(
     async (values: CreateTaskFormValues) => {
-      setIsSubmitting(true);
-      try {
-        await createTask(projectId, values);
-        form.reset();
-        router.push(`/project/${projectId}`);
-        toast.success("Task created successfully");
-      } catch (err: unknown) {
-        const message = isApiError(err) ? err.msg : "Something went wrong";
-        toast.error(`Failed to create task: ${message}`);
-      } finally {
-        setIsSubmitting(false);
-      }
+      mutation.mutate(values);
     },
-    [form, projectId, router],
+    [mutation],
   );
 
   return {
     form,
-    isSubmitting,
+    isSubmitting: mutation.isPending,
     onSubmit: form.handleSubmit(onSubmit),
   };
 }
