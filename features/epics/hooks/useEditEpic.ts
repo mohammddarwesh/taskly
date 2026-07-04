@@ -1,6 +1,9 @@
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { epicFormSchema, EpicFormValues } from "../schemas/epic.schema";
 import { updateEpic } from "../services/epic.service";
@@ -14,7 +17,7 @@ export function useEditEpic(
   onUpdate?: () => void,
 ) {
   const [editingField, setEditingField] = useState<EpicField | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const queryClient = useQueryClient();
 
   const defaultValues = useMemo<EpicFormValues>(
     () => ({
@@ -40,8 +43,20 @@ export function useEditEpic(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValues]);
 
+  const mutation = useMutation({
+    mutationFn: (payload: Partial<EpicFormValues>) => updateEpic(projectId, epic.id, payload),
+    onSuccess: () => {
+      toast.success("Epic updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["project", projectId, "epics"] });
+      onUpdate?.();
+    },
+    onError: () => {
+      toast.error("Failed to update epic. Please try again.");
+    }
+  });
+
   const isFieldLocked = (field: EpicField) =>
-    isSaving || (editingField !== null && editingField !== field);
+    mutation.isPending || (editingField !== null && editingField !== field);
 
   const startEditing = (field: EpicField) => {
     if (isFieldLocked(field)) return;
@@ -69,17 +84,12 @@ export function useEditEpic(
     const apiValue =
       field === "assignee_id" || field === "deadline" ? raw || null : raw;
 
-    setIsSaving(true);
     try {
-      await updateEpic(projectId, epic.id, { [field]: apiValue });
+      await mutation.mutateAsync({ [field]: apiValue });
       form.resetField(field, { defaultValue: raw });
-      toast.success("Epic updated successfully");
-      onUpdate?.();
     } catch {
-      toast.error("Failed to update epic. Please try again.");
       form.resetField(field);
     } finally {
-      setIsSaving(false);
       setEditingField(null);
     }
   };
@@ -87,7 +97,7 @@ export function useEditEpic(
   return {
     form,
     editingField,
-    isSaving,
+    isSaving: mutation.isPending,
     isFieldLocked,
     startEditing,
     cancelField,
