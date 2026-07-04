@@ -1,6 +1,9 @@
-import { useCallback, useState } from "react";
+"use client";
+
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addProjectSchema,
   AddProjectFormValues,
@@ -10,28 +13,32 @@ import { isApiError } from "@/types/apiError.types";
 import { toast } from "react-toastify";
 
 export function useAddProject() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
+
   const form = useForm<AddProjectFormValues>({
     resolver: zodResolver(addProjectSchema),
     defaultValues: { name: "", description: "" },
   });
 
+  const mutation = useMutation({
+    mutationFn: createProject,
+    onSuccess: () => {
+      form.reset();
+      toast.success("Project created successfully");
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+    onError: (err: unknown) => {
+      const message = isApiError(err) ? err.msg : "Something went wrong";
+      toast.error(`Failed to create project: ${message}`);
+    }
+  });
+
   const onSubmit = useCallback(
     async (values: AddProjectFormValues) => {
-      setIsSubmitting(true);
-      try {
-        await createProject(values);
-        form.reset();
-        toast.success("Project created successfully");
-      } catch (err: unknown) {
-        const message = isApiError(err) ? err.msg : "Something went wrong";
-        toast.error(`Failed to create project: ${message}`);
-      } finally {
-        setIsSubmitting(false);
-      }
+      mutation.mutate(values);
     },
-    [form],
+    [mutation],
   );
 
-  return { form, isSubmitting, onSubmit: form.handleSubmit(onSubmit) };
+  return { form, isSubmitting: mutation.isPending, onSubmit: form.handleSubmit(onSubmit) };
 }
