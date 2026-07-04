@@ -1,28 +1,20 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import { getProjectEpics } from "../services/epic.service";
-import { Epic } from "../types/epic.types";
 import { isApiError } from "@/types/apiError.types";
 
 export function useProjectEpics(projectId: string) {
-  const [epics, setEpics] = useState<Epic[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: epics = [], isLoading, error } = useQuery({
+    queryKey: ["project", projectId, "epics"],
+    queryFn: async () => {
+      const response = await getProjectEpics(projectId);
+      return response.data;
+    },
+    enabled: !!projectId,
+  });
 
-  useEffect(() => {
-    const fetchEpics = async () => {
-      try {
-        const response = await getProjectEpics(projectId);
-        setEpics(response.data);
-      } catch (err) {
-        const message = isApiError(err) ? err.msg : "Failed to load epics";
-        setError(message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const errorMessage = error ? (isApiError(error) ? error.msg : "Failed to load epics") : null;
 
-    if (projectId) fetchEpics();
-  }, [projectId]);
-
-  return { epics, isLoading, error };
+  return { epics, isLoading, error: errorMessage };
 }
