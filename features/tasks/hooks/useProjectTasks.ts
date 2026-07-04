@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { usePaginatedData } from "@/hooks/usePaginatedData";
 import { getProjectTasks } from "../services/task.service";
 import { TaskStatusType } from "../types/task.types";
+import { taskKeys } from "./taskQueries";
 
 interface UseProjectTasksOptions {
   projectId: string;
@@ -27,6 +28,7 @@ export function useProjectTasks({
   );
 
   const result = usePaginatedData({
+    queryKey: taskKeys.list(projectId, { status, search }),
     fetcher,
     pageSize,
     searchValue: search,
