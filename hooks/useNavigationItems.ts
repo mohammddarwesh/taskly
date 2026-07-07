@@ -3,10 +3,15 @@ import { usePathname } from "next/navigation";
 
 const globalNavItems: NavItemType[] = [
   { href: "/project", iconRef: "projects.svg", label: "Projects" },
-  { href: "/epics", iconRef: "epics.svg", label: "Epics" },
-  { href: "/tasks", iconRef: "tasks.svg", label: "Tasks" },
-  { href: "/members", iconRef: "members.svg", label: "Members" },
-  { href: "/details", iconRef: "details.svg", label: "Details" },
+  // { href: "/epics", iconRef: "epics.svg", label: "Epics" },
+  // { href: "/tasks", iconRef: "tasks.svg", label: "Tasks" },
+  // { href: "/members", iconRef: "members.svg", label: "Members" },
+  // { href: "/details", iconRef: "details.svg", label: "Details" },
+  {
+    href: "/my-statistics",
+    iconRef: "AnalyticsIcon.svg",
+    label: "My Statistics",
+  },
 ];
 
 const getProjectIdFromPath = (pathname: string): string | null => {
@@ -16,6 +21,11 @@ const getProjectIdFromPath = (pathname: string): string | null => {
 
 const getProjectNavItems = (projectId: string): NavItemType[] => [
   { href: "/project", iconRef: "projects.svg", label: "Projects" },
+  {
+    href: "/my-statistics",
+    iconRef: "AnalyticsIcon.svg",
+    label: "My Statistics",
+  },
   {
     href: `/project/${projectId}/tasks`,
     iconRef: "tasks.svg",
