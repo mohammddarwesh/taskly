@@ -1,64 +1,28 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Project } from '../types/project.types';
+import { useQuery } from '@tanstack/react-query';
 import { getProjects } from '../services/project.service';
 import { isApiError } from '@/types/apiError.types';
 
 export function useProjects() {
-    const [projects, setProjects] = useState<Project[] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);   // start as loading
-    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
-
-    // Manual retry (for the Error screen button)
-    const retry = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const data = await getProjects();
-            setProjects(data);
-        } catch (err: unknown) {
-            if (isApiError(err) && err.code === 401) {
-                router.push('/login');
-                return;
-            }
-            setError(isApiError(err) ? err.msg : 'Failed to load projects');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [router]);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        const fetchInitial = async () => {
+    const { data: projects = null, isLoading, error, refetch } = useQuery({
+        queryKey: ['projects'],
+        queryFn: async () => {
             try {
-                const data = await getProjects();
-                if (!cancelled) {
-                    setProjects(data);
-                }
+                return await getProjects();
             } catch (err: unknown) {
-                if (!cancelled) {
-                    if (isApiError(err) && err.code === 401) {
-                        router.push('/login');
-                        return;
-                    }
-                    setError(isApiError(err) ? err.msg : 'Failed to load projects');
+                if (isApiError(err) && err.code === 401) {
+                    router.push('/login');
+                    throw err;
                 }
-            } finally {
-                if (!cancelled) {
-                    setIsLoading(false);
-                }
+                throw err;
             }
-        };
+        }
+    });
 
-        fetchInitial();
-        return () => {
-            cancelled = true;
-        };
-    }, [router]);
+    const errorMessage = error ? (isApiError(error) ? error.msg : 'Failed to load projects') : null;
 
-    return { projects, isLoading, error, retry };
+    return { projects, isLoading, error: errorMessage, retry: refetch };
 }

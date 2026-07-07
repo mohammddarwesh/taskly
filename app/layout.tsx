@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import StoreProvider from "@/store/provider";
+import QueryProvider from "@/components/providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <StoreProvider>{children} </StoreProvider>
+        <StoreProvider>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+        </StoreProvider>
         <ToastContainer
           position="bottom-right"
           autoClose={5000}

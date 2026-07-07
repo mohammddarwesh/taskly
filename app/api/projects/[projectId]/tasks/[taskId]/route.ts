@@ -26,7 +26,7 @@ export async function PATCH(
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ status: body.status }),
+      body: JSON.stringify(body),
     });
 
     if (!res.ok) {

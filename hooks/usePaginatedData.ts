@@ -1,22 +1,34 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
-import { usePagination } from "./usePagination";
+import {
+  useInfiniteQuery,
+  useQuery,
+  keepPreviousData,
+} from "@tanstack/react-query";
+import { useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useIsMobile } from "@/libs/useIsMobile";
 import { useInfiniteScroll } from "./useInfiniteScroll";
+import { isApiError } from "@/types/apiError.types";
+
+interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+}
 
 interface UsePaginatedDataOptions<T> {
+  queryKey: readonly unknown[];
   fetcher: (
     limit: number,
     offset: number,
-  ) => Promise<{ data: T[]; total: number }>;
+  ) => Promise<PaginatedResponse<T>>;
   pageSize?: number;
   searchValue?: string;
   mode?: "paginate" | "infinite";
 }
 
 export function usePaginatedData<T>({
+  queryKey,
   fetcher,
   pageSize = 6,
   searchValue = "",
@@ -24,48 +36,61 @@ export function usePaginatedData<T>({
 }: UsePaginatedDataOptions<T>) {
   const isMobile = useIsMobile();
   const mode = explicitMode ?? (isMobile ? "infinite" : "paginate");
-  const paginationMode = mode === "infinite" ? "append" : "replace";
-
   const searchParams = useSearchParams();
   const router = useRouter();
-  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
-  const hasMounted = useRef(false);
-  const lastFetchKeyRef = useRef<string>("");
-  const prevSearchRef = useRef(searchValue);
+  const pageFromUrl = Math.max(
+    1,
+    Number.parseInt(searchParams.get("page") || "1", 10) || 1,
+  );
 
-  const {
-    data,
-    currentPage,
-    totalPages,
-    totalCount,
-    isLoading,
-    error,
-    fetchPage,
-  } = usePagination({
-    fetcher,
-    pageSize,
-    mode: paginationMode,
+  const paginatedQuery = useQuery({
+    queryKey: [...queryKey, "page", pageFromUrl, pageSize],
+    queryFn: () => fetcher(pageSize, (pageFromUrl - 1) * pageSize),
+    enabled: mode === "paginate",
+    placeholderData: keepPreviousData,
   });
 
-  useEffect(() => {
-    const pageToLoad = mode === "paginate" ? pageFromUrl : 1;
-    const key = `${pageToLoad}-${searchValue}`;
+  const infiniteQuery = useInfiniteQuery({
+    queryKey: [...queryKey, "infinite", pageSize],
+    queryFn: ({ pageParam }) => fetcher(pageSize, (pageParam - 1) * pageSize),
+    initialPageParam: 1,
+    enabled: mode === "infinite",
+    getNextPageParam: (lastPage, allPages) => {
+      const loadedItems = allPages.reduce(
+        (total, page) => total + page.data.length,
+        0,
+      );
 
-    if (!hasMounted.current) {
-      hasMounted.current = true;
-      lastFetchKeyRef.current = key;
-      prevSearchRef.current = searchValue;
-      fetchPage(pageToLoad);
-      return;
-    }
+      return loadedItems < lastPage.total ? allPages.length + 1 : undefined;
+    },
+  });
 
-    if (key !== lastFetchKeyRef.current) {
-      const isSearchChange = searchValue !== prevSearchRef.current;
-      lastFetchKeyRef.current = key;
-      prevSearchRef.current = searchValue;
-      fetchPage(pageToLoad, { reset: isSearchChange });
-    }
-  }, [pageFromUrl, searchValue, mode, fetchPage]);
+  const data =
+    mode === "paginate"
+      ? paginatedQuery.data?.data ?? []
+      : (infiniteQuery.data?.pages.flatMap((page) => page.data) ?? []);
+
+  const totalCount =
+    mode === "paginate"
+      ? paginatedQuery.data?.total ?? 0
+      : infiniteQuery.data?.pages[0]?.total ?? 0;
+
+  const totalPages = totalCount > 0 ? Math.ceil(totalCount / pageSize) : 0;
+  const currentPage =
+    mode === "paginate" ? pageFromUrl : infiniteQuery.data?.pages.length ?? 1;
+  const isLoading =
+    mode === "paginate" ? paginatedQuery.isLoading : infiniteQuery.isLoading;
+  const isLoadingMore =
+    mode === "infinite" && infiniteQuery.isFetchingNextPage;
+
+  const errorSource =
+    mode === "paginate" ? paginatedQuery.error : infiniteQuery.error;
+
+  const error = errorSource
+    ? isApiError(errorSource)
+      ? errorSource.msg
+      : "An unexpected error occurred"
+    : null;
 
   const setPage = useCallback(
     (page: number) => {
@@ -82,13 +107,21 @@ export function usePaginatedData<T>({
     if (mode === "paginate") {
       if (currentPage < totalPages) setPage(currentPage + 1);
     } else {
-      if (currentPage < totalPages) fetchPage(currentPage + 1);
+      if (infiniteQuery.hasNextPage && !infiniteQuery.isFetchingNextPage) {
+        void infiniteQuery.fetchNextPage();
+      }
     }
-  }, [mode, currentPage, totalPages, setPage, fetchPage]);
+  }, [
+    currentPage,
+    infiniteQuery,
+    mode,
+    setPage,
+    totalPages,
+  ]);
 
   const { sentinelRef } = useInfiniteScroll(
-    isLoading,
-    mode === "infinite" && currentPage < totalPages,
+    isLoadingMore,
+    mode === "infinite" && Boolean(infiniteQuery.hasNextPage),
     nextPage,
   );
 
@@ -101,12 +134,20 @@ export function usePaginatedData<T>({
     error,
     setPage,
     nextPage,
+    refetch:
+      mode === "paginate" ? paginatedQuery.refetch : infiniteQuery.refetch,
     sentinelRef,
-    hasMore: currentPage < totalPages,
+    hasMore:
+      mode === "paginate"
+        ? currentPage < totalPages
+        : Boolean(infiniteQuery.hasNextPage),
     isEmpty: !isLoading && !error && totalCount === 0,
     isInitialLoading: isLoading && data.length === 0,
     showPagination: mode === "paginate" && totalPages > 1,
-    showInfiniteScroll: mode === "infinite" && currentPage < totalPages,
-    showLoadingMore: isLoading && data.length > 0 && mode === "infinite",
+    showInfiniteScroll: mode === "infinite" && Boolean(infiniteQuery.hasNextPage),
+    showLoadingMore: isLoadingMore && data.length > 0,
+    isFetching:
+      mode === "paginate" ? paginatedQuery.isFetching : infiniteQuery.isFetching,
+    searchValue,
   };
 }

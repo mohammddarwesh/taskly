@@ -1,30 +1,47 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/react";
-import { TaskStatusType, Task } from "@/features/tasks/types/task.types";
+import { TaskStatusType } from "@/features/tasks/types/task.types";
 import { statusConfig } from "@/features/tasks/utils/statusConfig";
 import { ColumnHeader } from "./_components/ColumnHeader";
 import { TaskListContent } from "./_components/TaskListContent";
 import { AddTaskDashedButton } from "./_components/AddTaskDashedButton";
 import { useRouter } from "next/navigation";
 import { cn } from "@/libs/utils";
+import { useProjectTasks } from "@/features/tasks/hooks/useProjectTasks";
 
 interface TaskColumnProps {
   projectId: string;
   status: TaskStatusType;
-  tasks: Task[];
+  search?: string;
   onTaskClick?: (taskId: string) => void;
 }
 
 export function TaskColumn({
   projectId,
   status,
-  tasks,
+  search,
   onTaskClick,
 }: TaskColumnProps) {
   const router = useRouter();
   const config = statusConfig[status] || statusConfig.TO_DO;
   const { ref, isDropTarget } = useDroppable({ id: status });
+
+  const {
+    tasks,
+    totalCount,
+    isLoading,
+    error,
+    sentinelRef,
+    hasMore,
+    showLoadingMore,
+  } = useProjectTasks({
+    projectId,
+    status,
+    search,
+    mode: "infinite",
+    pageSize: 10,
+  });
 
   const handleAddTask = () => {
     router.push(`/project/${projectId}/tasks/new?status=${status}`);
@@ -40,7 +57,7 @@ export function TaskColumn({
     >
       <ColumnHeader
         status={status}
-        count={tasks.length}
+        count={totalCount}
         config={config}
         onAddTask={handleAddTask}
       />
@@ -49,12 +66,12 @@ export function TaskColumn({
       </div>
       <TaskListContent
         tasks={tasks}
-        isLoading={false}
-        error={null}
+        isLoading={isLoading}
+        error={error}
         onTaskClick={onTaskClick}
-        sentinelRef={null}
-        hasMore={false}
-        isLoadingMore={false}
+        sentinelRef={sentinelRef}
+        hasMore={hasMore}
+        isLoadingMore={showLoadingMore}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { DragDropProvider } from "@dnd-kit/react";
+import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 import { TaskStatus, TaskStatusType } from "@/features/tasks/types/task.types";
 import { useBoardTasks } from "@/features/tasks/hooks/useBoardTasks";
 import { TaskColumn } from "./TaskColumn";
@@ -12,21 +12,17 @@ interface BoardViewProps {
 }
 
 export function BoardView({ projectId, onTaskClick, search }: BoardViewProps) {
-  const { tasksByStatus, loading, moveTask } = useBoardTasks(projectId, search);
+  const { moveTask } = useBoardTasks(projectId);
 
-  const handleDragEnd = async (event: any) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     if (event.canceled) return;
     const { source, target } = event.operation;
     if (!source || !target) return;
 
-    const taskId = source.id;
+    const taskId = String(source.id);
     const newStatus = target.id as TaskStatusType;
     await moveTask(taskId, newStatus);
   };
-
-  if (loading) {
-    return <div className="flex justify-center py-10">Loading board...</div>;
-  }
 
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
@@ -35,8 +31,8 @@ export function BoardView({ projectId, onTaskClick, search }: BoardViewProps) {
           <TaskColumn
             key={status}
             status={status}
-            tasks={tasksByStatus[status] || []}
             projectId={projectId}
+            search={search}
             onTaskClick={onTaskClick}
           />
         ))}

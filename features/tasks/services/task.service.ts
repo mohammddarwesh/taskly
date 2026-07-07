@@ -74,3 +74,21 @@ export async function updateTaskStatus(
     body: { status },
   });
 }
+
+export async function updateTask(
+  projectId: string,
+  taskId: string,
+  updates: Partial<{
+    title: string;
+    description: string | null;
+    status: TaskStatusType;
+    assignee_id: string | null;
+    epic_id: string | null;
+    due_date: string | null;
+  }>,
+): Promise<void> {
+  await apiClient(`/api/projects/${projectId}/tasks/${taskId}`, {
+    method: "PATCH",
+    body: updates,
+  });
+}

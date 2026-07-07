@@ -29,6 +29,7 @@ export function EpicsContentInner({ projectId }: EpicsContentInnerProps) {
     isLoading,
     error,
     setPage,
+    refetch,
     sentinelRef,
     isEmpty,
     isInitialLoading,
@@ -49,7 +50,7 @@ export function EpicsContentInner({ projectId }: EpicsContentInnerProps) {
   };
 
   const handleUpdateSuccess = () => {
-    setPage(currentPage);
+    void refetch();
   };
 
   const handleTaskClick = (taskId: string) => {
@@ -59,7 +60,7 @@ export function EpicsContentInner({ projectId }: EpicsContentInnerProps) {
   if (isInitialLoading) return <EpicsLoadingSkeleton />;
 
   if (error && !isLoading) {
-    return <ErrorScreen message={error} onRetry={() => setPage(currentPage)} />;
+    return <ErrorScreen message={error} onRetry={() => void refetch()} />;
   }
 
   if (isEmpty) {

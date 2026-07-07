@@ -1,9 +1,31 @@
-// TaskDetailsHeader.tsx
 "use client";
 
+import { toast } from "react-toastify";
 import { Task } from "@/features/tasks/types/task.types";
+import { EditableText } from "@/components/ui/EditableText";
+import { useUpdateTask } from "../../hooks/useUpdateTask";
 
-export function TaskDetailsHeader({ task }: { task: Task }) {
+interface TaskDetailsHeaderProps {
+  task: Task;
+  projectId: string;
+  setTask: (task: Task) => void;
+}
+
+export function TaskDetailsHeader({
+  task,
+  projectId,
+  setTask,
+}: TaskDetailsHeaderProps) {
+  const { updateField, isUpdating } = useUpdateTask(projectId, task, setTask);
+
+  const handleTitleSave = async (val: string | null) => {
+    if (!val) {
+      toast.error("Title is required");
+      return;
+    }
+    await updateField("title", val);
+  };
+
   const epicLabel = task.epic
     ? `${task.epic.epic_id} (${task.epic.title})`
     : "No epic";
@@ -34,9 +56,21 @@ export function TaskDetailsHeader({ task }: { task: Task }) {
           </span>
         )}
       </div>
-      <h2 className="text-[28px] md:text-[32px] font-bold text-[#041B3C] leading-[1.15]">
-        {task.title}
-      </h2>
+
+      <EditableText
+        label="Title"
+        value={task.title}
+        onSave={handleTitleSave}
+        display={
+          <h2 className="text-[28px] md:text-[32px] font-bold text-[#041B3C] leading-[1.15]">
+            {task.title}
+          </h2>
+        }
+        editorType="input"
+        placeholder="Enter task title..."
+        disabled={isUpdating}
+        className="w-full"
+      />
     </div>
   );
 }

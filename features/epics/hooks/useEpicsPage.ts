@@ -20,6 +20,7 @@ export function useEpicsPage(projectId: string) {
   );
 
   const { data, ...rest } = usePaginatedData({
+    queryKey: ["project", projectId, "epics", { search }],
     fetcher,
     pageSize: 6,
     searchValue: search,

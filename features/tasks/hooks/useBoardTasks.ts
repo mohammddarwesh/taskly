@@ -1,92 +1,95 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import {
-  TaskStatus,
-  TaskStatusType,
-  Task,
-} from "@/features/tasks/types/task.types";
-import {
-  getProjectTasks,
-  updateTaskStatus,
-} from "@/features/tasks/services/task.service";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { TaskStatusType, Task } from "@/features/tasks/types/task.types";
+import { updateTaskStatus } from "@/features/tasks/services/task.service";
 import { toast } from "react-toastify";
+import { useCallback } from "react";
+import {
+  findTaskInTaskCaches,
+  getTaskListFiltersFromKey,
+  isInfiniteTaskListKey,
+  TaskListCacheData,
+  taskKeys,
+  updateTaskListCacheData,
+} from "./taskQueries";
 
-export function useBoardTasks(projectId: string, search?: string) {
-  const [tasksByStatus, setTasksByStatus] = useState<
-    Record<TaskStatusType, Task[]>
-  >(
-    Object.values(TaskStatus).reduce(
-      (acc, s) => ({ ...acc, [s]: [] }),
-      {} as Record<TaskStatusType, Task[]>,
-    ),
-  );
-  const [loading, setLoading] = useState(true);
+export function useBoardTasks(projectId: string) {
+  const queryClient = useQueryClient();
 
-  const fetchTasks = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { data } = await getProjectTasks({
-        projectId,
-        search,
-        limit: 1000,
-      });
-      const grouped = Object.values(TaskStatus).reduce(
-        (acc, s) => {
-          acc[s] = data.filter((t) => t.status === s);
-          return acc;
-        },
-        {} as Record<TaskStatusType, Task[]>,
+  const mutation = useMutation({
+    mutationFn: ({ taskId, newStatus }: { taskId: string; newStatus: TaskStatusType }) =>
+      updateTaskStatus(taskId, projectId, newStatus),
+    onMutate: async ({ taskId, newStatus }) => {
+      await queryClient.cancelQueries({ queryKey: taskKeys.all(projectId) });
+
+      const previousTask = findTaskInTaskCaches(queryClient, projectId, taskId);
+
+      if (!previousTask || previousTask.status === newStatus) {
+        return null;
+      }
+
+      const previousDetail = queryClient.getQueryData(
+        taskKeys.detail(projectId, taskId),
       );
-      setTasksByStatus(grouped);
-    } catch (err) {
-      toast.error("Failed to load tasks");
-    } finally {
-      setLoading(false);
-    }
-  }, [projectId, search]);
+      const updatedTask: Task = { ...previousTask, status: newStatus };
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchTasks();
-  }, [fetchTasks]);
+      const previousTaskLists = queryClient.getQueriesData<TaskListCacheData>({
+        queryKey: taskKeys.lists(projectId),
+      });
+
+      for (const [queryKey, cachedData] of previousTaskLists) {
+        const key = queryKey as readonly unknown[];
+        const filters = getTaskListFiltersFromKey(key);
+        const isInfiniteList = isInfiniteTaskListKey(key);
+
+        queryClient.setQueryData(
+          queryKey,
+          updateTaskListCacheData(
+            cachedData,
+            filters,
+            previousTask,
+            updatedTask,
+            isInfiniteList,
+          ),
+        );
+      }
+
+      queryClient.setQueryData(taskKeys.detail(projectId, taskId), updatedTask);
+
+      return {
+        previousTask,
+        previousTaskLists,
+        previousDetail,
+      };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousTaskLists) {
+        for (const [queryKey, cachedData] of context.previousTaskLists) {
+          queryClient.setQueryData(queryKey, cachedData);
+        }
+      }
+
+      if (context?.previousTask) {
+        queryClient.setQueryData(
+          taskKeys.detail(projectId, variables.taskId),
+          context.previousDetail ?? context.previousTask,
+        );
+      }
+
+      toast.error("Failed to update task status. Please try again.");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: taskKeys.all(projectId) });
+    }
+  });
 
   const moveTask = useCallback(
     async (taskId: string, newStatus: TaskStatusType) => {
-      // Find current status
-      let oldStatus: TaskStatusType | null = null;
-      let task: Task | null = null;
-      for (const [status, tasks] of Object.entries(tasksByStatus)) {
-        const found = tasks.find((t) => t.id === taskId);
-        if (found) {
-          oldStatus = status as TaskStatusType;
-          task = found;
-          break;
-        }
-      }
-      if (!oldStatus || !task || oldStatus === newStatus) return;
-
-      // Optimistic update
-      const prevState = { ...tasksByStatus };
-      setTasksByStatus((prev) => {
-        const newState = { ...prev };
-        newState[oldStatus] = newState[oldStatus].filter(
-          (t) => t.id !== taskId,
-        );
-        newState[newStatus] = [...newState[newStatus], task];
-        return newState;
-      });
-
-      // Persist
-      try {
-        await updateTaskStatus(taskId, projectId, newStatus);
-      } catch (error) {
-        setTasksByStatus(prevState);
-        toast.error("Failed to update task status. Please try again.");
-      }
+      return mutation.mutateAsync({ taskId, newStatus });
     },
-    [projectId, tasksByStatus],
+    [mutation],
   );
 
-  return { tasksByStatus, loading, moveTask, refetch: fetchTasks };
+  return { moveTask };
 }
